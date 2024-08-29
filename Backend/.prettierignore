@@ -1,0 +1,13 @@
+# Ignore artifacts:
+build
+coverage
+
+# Ignore all JavaScript files in the src/vendor directory:
+src/vendor/*.js
+
+# Ignore all files in node_modules except for those with .json extensions:
+node_modules/**/*
+!node_modules/**/*.json
+
+# Ignore environment variable files:
+.env
