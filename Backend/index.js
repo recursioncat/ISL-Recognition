@@ -13,7 +13,10 @@ const app = express();
 app.use(express.static("public"));
 app.use(bodyParser.json());
 app.use( bodyParser.urlencoded({extended: true}));
-app.use(cors());
+app.use(cors({
+    origin: '*'
+})); // Allow all CORS requests
+
 app.use('/uploads', express.static('uploads'));
 
 app.use('/api/v1/auth', userRoutes);

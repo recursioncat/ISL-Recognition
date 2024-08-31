@@ -21,12 +21,10 @@ const userSchema = new mongoose.Schema({
     },
     gender :{
         type : String,
-        required : [true, "Please provide your gender"],
         enum : ["Male","Feamle","Other"]
     },
     category : {
         type : String,
-        required : [true, "Please provide your category"],
         enum: ["Deaf", "Dumb"]
     },
     createdAt: {

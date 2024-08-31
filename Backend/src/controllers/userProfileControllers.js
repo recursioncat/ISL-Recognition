@@ -1,5 +1,5 @@
 import { v2 as cloudinary } from 'cloudinary';
-import User from "../models/userModel.js";
+import User from "../models/UserModel.js";
 import jwt from "jsonwebtoken";
 import responseHandler from "../utils/resHandler.js";
 import errorResponseHandler from "../utils/errorResponseHandler.js";
@@ -62,7 +62,14 @@ export const updateUser = async (req, res) => {
 }
 
 export const uploadProfilePicture = async (req, res) => {
-    const { userId } = req.body;
+    const token = req.headers["x-auth-token"];
+
+    if(!token) {
+        return errorResponseHandler(res, 400, "error", "Please provide token");
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id.toString(); // Convert userId to a string
 
     if (!userId) {
         return errorResponseHandler(res, 400, 'error', 'User ID is required');

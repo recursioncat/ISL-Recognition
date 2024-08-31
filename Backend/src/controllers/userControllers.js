@@ -1,4 +1,4 @@
-import User from "../models/userModel.js";
+import User from "../models/UserModel.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import nodemailer from 'nodemailer';    
@@ -10,9 +10,9 @@ import errorResponseHandler from "../utils/errorResponseHandler.js";
 
 export const registerUser = async (req, res) => {
 
-    const { fullName, email, password, gender, category} = req.body;
+    const { fullName, email, password} = req.body;
 
-    if(!fullName || !email || !password || gender || category) {
+    if(!fullName || !email || !password ) {
        return errorResponseHandler(res, 400, "error", "Please fill in all fields");
     }
 
@@ -31,14 +31,13 @@ export const registerUser = async (req, res) => {
             fullName,
             userName,
             email,
-            password: hashedPassword,
-            gender,
-            category
+            password: hashedPassword
+           
         });
 
         user.save();
 
-        return responseHandler(res, 200, "success", "User registered successfully");
+        return responseHandler(res, 200, "success", "User registered successfully" , user);
 
     } catch (error) {
         return errorResponseHandler(res, 500, "error", "Problem registering user");
@@ -69,6 +68,8 @@ export const loginUser = async (req, res) => {
         const token = jwt.sign({ email: user.email, id: user._id }, process.env.JWT_SECRET, { expiresIn: "60d" });
 
         user.token = token;
+
+        user.save();
 
         return responseHandler(res, 200, "success", "User logged in successfully", token);
 
