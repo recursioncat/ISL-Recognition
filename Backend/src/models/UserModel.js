@@ -21,10 +21,12 @@ const userSchema = new mongoose.Schema({
     },
     gender :{
         type : String,
+        required : [true, "Please provide your gender"],
         enum : ["Male","Feamle","Other"]
     },
     category : {
         type : String,
+        required : [true, "Please provide your category"],
         enum: ["Deaf", "Dumb"]
     },
     createdAt: {
@@ -44,7 +46,11 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
-    chatHistory: [String]
+    chatHistory: [String],
+    profilePicture: {
+        type: String,
+        default: "https://res.cloudinary.com/dj7k9b8ps/image/upload/v1620286627/Profile%20Pictures/default-profile-picture-300x300.jpg"
+    },
 
     })
 
