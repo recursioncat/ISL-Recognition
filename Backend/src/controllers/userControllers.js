@@ -65,7 +65,7 @@ export const loginUser = async (req, res) => {
             return errorResponseHandler(res, 400, "error", "Invalid credentials");
         }
 
-        const token = jwt.sign({ email: user.email, id: user._id }, process.env.JWT_SECRET, { expiresIn: "60d" });
+        const token = jwt.sign({ email: user.email, id: user._id , verified : user.isVerified }, process.env.JWT_SECRET, { expiresIn: "60d" });
 
         user.token = token;
 
@@ -234,6 +234,10 @@ export const verifyEmail = async (req, res) => {
         }
 
         user.isVerified = true;
+
+        const token = jwt.sign({ email: user.email, id: user._id , verified : true }, process.env.JWT_SECRET, { expiresIn: "60d" });
+
+        user.token = token;
 
         user.save();
 
