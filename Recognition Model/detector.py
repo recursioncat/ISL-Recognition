@@ -18,28 +18,14 @@ def processImage(path):
 
 @app.route('/predict', methods= ['POST'])
 def predict():
+    model = keras.models.load_model('gesturesV7.keras')
     data = request.get_json(force = True)
 
     url = data['url']
+
     image_arr = processImage(url)
-    prediction1 = np.argmax(model1.predict(image_arr)[0])
-    prediction2 = np.argmax(model2.predict(image_arr)[0])
-
-    if abs(prediction1 - prediction2) < 5 or prediction1 == prediction2:
-        prediction = prediction2
-    
-    elif prediction1 > prediction2:
-        prediction = prediction2
-
-    elif prediction2 > prediction1:
-        prediction = prediction1
-    
-
-    result = class_names[prediction]
-
+    prediction = model.predict(image_arr)
+    result = class_names[np.argmax(prediction[0])]
     return jsonify(result)
-    
-
-
 
 app.run(port=5000)
