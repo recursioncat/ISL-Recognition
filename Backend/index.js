@@ -5,6 +5,8 @@ import connectDB from './src/db/index.js';
 import 'dotenv/config'// Import dotenv package to load environment variables
 import userRoutes from './src/routes/userRoutes.js';
 import userProfileRoutes from './src/routes/userProfileRoutes.js';
+import sendImageAiRoutes from './src/routes/sendImageAiRoutes.js';
+
 import { v2 as cloudinary } from 'cloudinary';
 
 const app = express(); 
@@ -21,6 +23,7 @@ app.use('/uploads', express.static('uploads'));
 
 app.use('/api/v1/auth', userRoutes);
 app.use('/api/v1/user', userProfileRoutes);
+app.use('/api/v1/ai/upload', sendImageAiRoutes);
 
 connectDB();
 
