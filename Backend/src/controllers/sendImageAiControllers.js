@@ -12,16 +12,14 @@ export const sendImageAi = async (req, res) => {
         }
         
         // path needs to be changed to the path of the image on the server
-        const apiDataUpload = await axios.post('http://localhost:5000/upload', file.path).then((response) => {
-            return responseHandler(res, 200, 'success', 'server picture uploaded successfully', { imageUrl: response.data });
+        const apiDataUpload = await axios.post('http://127.0.0.1:5000/predict', {"url" : file.path}).then((response) => {
+            return responseHandler(res, 200, 'success', 'server picture uploaded successfully', { predictedData: response.data });
         }).catch((error) => {
             return errorResponseHandler(res, 500, 'error', 'Problem uploading ai picture');
         }).finally(() => {
             fs.unlinkSync(file.path);
         });
         
-      
-        return responseHandler(res, 200, 'success', 'ai response generated successfully ' , { imageUrl: file.path, resData : apiDataUpload });
     } catch (error) {
         fs.unlinkSync(file.path);
         return errorResponseHandler(res, 500, 'error', 'Problem uploading ai picture');
