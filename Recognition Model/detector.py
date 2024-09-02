@@ -16,7 +16,7 @@ def processImage(path):
 
 @app.route('/predict', methods= ['POST'])
 def predict():
-    model = keras.models.load_model('Models/gesturesV7.keras')
+    model = keras.models.load_model('gesturesV7.keras')
     data = request.get_json(force = True)
 
     url = data['url']
