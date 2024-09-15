@@ -6,7 +6,7 @@ import 'dotenv/config'// Import dotenv package to load environment variables
 import userRoutes from './src/routes/userRoutes.js';
 import userProfileRoutes from './src/routes/userProfileRoutes.js';
 import sendImageAiRoutes from './src/routes/sendImageAiRoutes.js';
-
+import messageRoutes from './src/routes/messageRoutes.js';
 import { v2 as cloudinary } from 'cloudinary';
 
 const app = express(); 
@@ -24,6 +24,7 @@ app.use('/uploads', express.static('uploads'));
 app.use('/api/v1/auth', userRoutes);
 app.use('/api/v1/user', userProfileRoutes);
 app.use('/api/v1/ai/upload', sendImageAiRoutes);
+app.use('/api/v1/chat', messageRoutes);
 
 connectDB();
 
@@ -38,6 +39,8 @@ app.get('/', (req, res) => {
 });
 
 
-app.listen(process.env.PORT || 5000, () => {
-    console.log(`Server is running on port ${process.env.PORT || 5000}`);
-});
+// app.listen(process.env.PORT || 5000, () => {
+//     console.log(`Server is running on port ${process.env.PORT || 5000}`);
+// });
+
+export default app;
