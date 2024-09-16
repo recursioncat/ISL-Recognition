@@ -17,14 +17,16 @@ export default (io) => {
           sender,
           recipient,
           content,
+          timestamp: new Date() // Add timestamp here
         });
 
         await message.save();
 
         // Emit the message to the recipient's room
         io.to(recipient).emit('receiveMessage', message);
-        // Optionally, you might want to also send the message to the sender
-        // io.to(senderId).emit('receiveMessage', message);
+
+        // Optionally, emit to the sender as well if needed
+        // io.to(sender).emit('receiveMessage', message);
       } catch (err) {
         console.error('Error sending message via Socket.IO:', err);
       }

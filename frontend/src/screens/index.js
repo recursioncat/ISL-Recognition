@@ -8,3 +8,5 @@ export {default as ForgotPassScreen} from './ForgotPassScreen';
 export {default as VerifyAccountScreen} from './VerifyAccountScreen';
 export {default as SignToText} from './SignToText';
 export {default as ProfileScreen} from './ProfileScreen';
+export {default as ChatScreen} from './ChatScreen';
+export {default as ContactsScreen} from './ContactsScreen';
