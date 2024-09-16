@@ -22,7 +22,7 @@ export default (io) => {
         await message.save();
 
         // Emit the message to the recipient's room
-        io.to(recipientId).emit('receiveMessage', message);
+        io.to(recipient).emit('receiveMessage', message);
         // Optionally, you might want to also send the message to the sender
         // io.to(senderId).emit('receiveMessage', message);
       } catch (err) {
