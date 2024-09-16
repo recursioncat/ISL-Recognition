@@ -11,11 +11,11 @@ export default (io) => {
     });
 
     // Handle sending a new message
-    socket.on('sendMessage', async ({ senderId, recipientId, content }) => {
+    socket.on('sendMessage', async ({ sender, recipient, content }) => {
       try {
         const message = new Message({
-          sender: senderId,
-          recipient: recipientId,
+          sender,
+          recipient,
           content,
         });
 
@@ -24,7 +24,7 @@ export default (io) => {
         // Emit the message to the recipient's room
         io.to(recipientId).emit('receiveMessage', message);
         // Optionally, you might want to also send the message to the sender
-        io.to(senderId).emit('receiveMessage', message);
+        // io.to(senderId).emit('receiveMessage', message);
       } catch (err) {
         console.error('Error sending message via Socket.IO:', err);
       }
