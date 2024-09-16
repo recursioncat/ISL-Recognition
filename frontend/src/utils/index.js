@@ -22,4 +22,4 @@ export const suggestions = [
    
 ]
 
-export const baseUrl = 'https://5b8c-2405-201-8020-380a-8479-db42-99d6-673c.ngrok-free.app'
+export const baseUrl = 'https://16a5-2405-201-8020-380a-f825-1cf8-efb3-29ba.ngrok-free.app'
