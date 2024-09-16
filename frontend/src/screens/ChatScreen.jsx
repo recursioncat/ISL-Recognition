@@ -51,6 +51,7 @@ const ChatScreen = () => {
             sender: userId,
             recipient: recipientId,
             content: message,
+            timestamp: new Date() // Add the timestamp when the message is sent
         };
 
         // Send the message via socket
@@ -58,6 +59,12 @@ const ChatScreen = () => {
 
         // Clear the message input field
         setMessage('');
+    };
+
+    // Helper function to format the timestamp into "hh:mm AM/PM"
+    const formatTime = (timestamp) => {
+        const date = new Date(timestamp);
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
     };
 
     const uniqueKey = (item, index) => index.toString();
@@ -72,15 +79,14 @@ const ChatScreen = () => {
                     <View className={`mb-2 p-2 ${
                         item.sender === userId ? 'bg-blue-200 self-end' : 'bg-gray-200 self-start'
                     } rounded-lg`}>
-                        <Text className={`text-sm font-medium ${
-                            item.sender === userId ? 'text-blue-800' : 'text-gray-800'
-                        }`}>
-                            {item.sender === userId ? 'Me' : 'Them'}
-                        </Text>
                         <Text className={`text-lg mt-1 ${
                             item.sender === userId ? 'text-blue-800' : 'text-gray-800'
                         }`}>
                             {item.content}
+                        </Text>
+                        {/* Display the timestamp at the bottom right */}
+                        <Text className="text-xs text-gray-500 text-right">
+                            {formatTime(item.timestamp)}
                         </Text>
                     </View>
                 )}
