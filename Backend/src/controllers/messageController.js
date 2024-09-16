@@ -27,7 +27,6 @@ export const sendMessage = async (req, res) => {
 // Fetch chat history between two users
 export const getMessages = async (req, res) => {
   const { userId1, userId2 } = req.params;
-
   try {
     const messages = await Message.find({
       $or: [
@@ -38,6 +37,7 @@ export const getMessages = async (req, res) => {
 
     return responseHandler(res, 200, 'success', 'Messages fetched', { messages });
   } catch (err) {
+    console.log(" Error : " + err);
     return errorResponseHandler(res, 500, 'error', 'Error fetching messages');
   }
 };

@@ -5,9 +5,9 @@ export default (io) => {
     console.log('User connected', socket.id);
 
     // Handle user joining a room for individual communication
-    socket.on('joinRoom', ({ userId, recipientId }) => {
-      socket.join(userId);
-      socket.join(recipientId); // Ensure both users can communicate
+    socket.on('joinRoom', ({ sender, recipient }) => {
+      socket.join(sender);
+      socket.join(recipient); // Ensure both users can communicate
     });
 
     // Handle sending a new message
