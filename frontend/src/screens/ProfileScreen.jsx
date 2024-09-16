@@ -3,12 +3,13 @@ import { View, Text, Image, TouchableOpacity } from 'react-native';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { baseUrl } from '../utils';
+import axios from 'axios';
 
 const ProfileScreen = ({ navigation }) => {
   const [userDetails, setUserDetails] = useState({
-    name: '',
-    email: '',
-    gender: '',
+    name: 'Biswajit Dey',
+    email: 'B@s.com',
+    gender: 'Male',
   });
 
   useEffect(() => {
@@ -17,18 +18,35 @@ const ProfileScreen = ({ navigation }) => {
 
   const fetchUserProfile = async () => {
     try {
-      const response = await fetch(`${baseUrl}/api/v1/user/getuser`, {
-        method: 'GET',
+      const token = await AsyncStorage.getItem('token');
+      
+      if (!token) {
+        return navigation.navigate('LoginScreen');
+      }
+  
+      console.log('Token:', token);
+  
+      const response = await axios.get(`${baseUrl}/api/v1/user/getuser`, {
         headers: {
-          Authorization: `Bearer ${await AsyncStorage.getItem('token')}`,
-        },
+          'x-auth-token': token
+        }
       });
-      const data = await response.json();
-      setUserDetails(data);
+  
+      // console.log('Response:', response);
+      setUserDetails(response.data.data);
+      
     } catch (error) {
-      console.error('Error fetching user profile:', error);
+      if (error.response) {
+        console.error('Error response data:', error.response.data);
+        console.error('Error response status:', error.response.status);
+      } else if (error.request) {
+        console.error('Error request data:', error.request);
+      } else {
+        console.error('Error message:', error.message);
+      }
     }
   };
+  
 
   const handleLogout = () => {
     Toast.show({
@@ -61,7 +79,7 @@ const ProfileScreen = ({ navigation }) => {
             <Text className="text-white text-xs">✎</Text>
           </TouchableOpacity> */}
         </View>
-        <Text className="text-2xl font-semibold text-gray-800 mt-2">{userDetails.name}</Text>
+        <Text className="text-2xl font-semibold text-gray-800 mt-2">{userDetails.fullName}</Text>
         {/* <Text className="text-lg text-gray-600 mt-1">{userDetails.phone}</Text> */}
       </View>
 
