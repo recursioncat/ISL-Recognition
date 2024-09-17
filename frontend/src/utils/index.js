@@ -22,5 +22,5 @@ export const suggestions = [
    
 ]
 
-// export const baseUrl = 'https://16a5-2405-201-8020-380a-f825-1cf8-efb3-29ba.ngrok-free.app'
-export const baseUrl = "http://192.168.29.174:3000"
+export const baseUrl = 'https://b7f7-2405-201-8020-380a-94df-e428-8dd9-824e.ngrok-free.app'
+// export const baseUrl = "http://192.168.29.174:3000"
