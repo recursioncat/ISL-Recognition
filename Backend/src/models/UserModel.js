@@ -49,9 +49,27 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: "https://res.cloudinary.com/dj7k9b8ps/image/upload/v1620286627/Profile%20Pictures/default-profile-picture-300x300.jpg"
     },
+    friendList : [
+        {
+            userId : {
+             type : mongoose.Schema.Types.ObjectId,
+             ref : "User"
+             },
+            userName : {
+                type : String,
+            },
+            profilePicture: {
+                type: String,
+                default: "https://res.cloudinary.com/dj7k9b8ps/image/upload/v1620286627/Profile%20Pictures/default-profile-picture-300x300.jpg"
+            },
+            email : {
+                type : String,
+            },
+        }
+    ]
 
     })
 
-const UserModel = mongoose.model("User", userSchema);
+const UserModel = mongoose.models.User || mongoose.model('User', userSchema);
 
 export default UserModel;

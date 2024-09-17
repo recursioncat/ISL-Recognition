@@ -303,3 +303,23 @@ export const updateUser = async (req, res) => {
             return errorResponseHandler(res, 500, "error", "Problem updating user");
         }
 }
+
+export const getUserId = async (req, res) => {
+    const {userEmail} = req.params;
+
+    if(!userEmail) {
+        return errorResponseHandler(res, 400, "error", "Please provide email");
+    }
+
+    try {
+        const user = await User.findOne({ email : userEmail });
+
+        if(!user) {
+            return errorResponseHandler(res, 400, "error", "User does not exist");
+        }
+
+        return responseHandler(res, 200, "success", "User fetched successfully", { id: user._id });
+    }catch(error) {
+        return errorResponseHandler(res, 500, "error", "Problem fetching user");
+    }
+}
