@@ -22,4 +22,4 @@ export const suggestions = [
    
 ]
 
-export const baseUrl = 'http://192.168.29.174:3000'
+export const baseUrl = 'http://192.168.235.12:3000'
