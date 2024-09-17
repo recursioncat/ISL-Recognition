@@ -49,6 +49,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: "https://res.cloudinary.com/dj7k9b8ps/image/upload/v1620286627/Profile%20Pictures/default-profile-picture-300x300.jpg"
     },
+    friendList : [
+        {
+           userId : {
+            type : mongoose.Schema.Types.ObjectId,
+            ref : "User"
+            },
+        }
+    ]
 
     })
 
