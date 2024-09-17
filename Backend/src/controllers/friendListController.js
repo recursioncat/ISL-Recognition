@@ -4,7 +4,11 @@ import responseHandler from "../utils/resHandler.js";
 import errorResponseHandler from "../utils/errorResponseHandler.js";
 
 export const saveFriend = async (req, res) => {
-    const { userEmail, friendEmail } = req.body;
+    const {userName, userEmail, friendEmail } = req.body;
+
+    if(!userName || !userEmail || !friendEmail) {
+        return errorResponseHandler(res, 400, "error", "Please provide all the required fields");
+    }
 
     try {
         const user = await User.findOne({email: userEmail});
@@ -19,12 +23,13 @@ export const saveFriend = async (req, res) => {
             return errorResponseHandler(res, 400, "error", "Friend does not exist");
         }
 
-        user.friendList.push({userId: friend._id});
+        user.friendList.push({userId: friend._id , userName : userName , email: friendEmail, profilePicture: friend.profilePicture});
         await user.save();
 
         return responseHandler(res, 200, "success", "Friend saved successfully");
 
     } catch (error) {
+        console.log(error);
         return errorResponseHandler(res, 500, "error", "Problem saving friend");
     }
 }
