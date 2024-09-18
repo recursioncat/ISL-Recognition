@@ -2,10 +2,10 @@ import React from 'react';
 import { Text, TouchableOpacity, StyleSheet, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
-const GradientButton = () => {
+const GradientButton = ({onPress}) => {
   return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.button}>
+    <View style={styles.container} >
+      <TouchableOpacity style={styles.button} onPress={onPress}>
         <LinearGradient
           colors={['#F4D03F', '#FADBD8']}
           start={{ x: 0.0, y: 0.5 }}
@@ -24,8 +24,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#000', // For the dark background
-    marginBottom: 25,
   },
   button: {
     width: 340, // Adjust width according to preference

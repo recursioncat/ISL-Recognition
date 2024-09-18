@@ -12,7 +12,7 @@ const SplashScreen = ({ navigation }) => {
       const token = await AsyncStorage.getItem('token');
       if (!token) {
         setAnimating(false); // Set animating false when check is done
-        navigation.replace('AuthNavigator'); // Navigate to login if no token
+        navigation.replace('IntroScreen'); // Navigate to login if no token
       } else if (!loading && userEmail) {
         // Once userEmail is available and loading is done, navigate to main screen
         setAnimating(false); // Set animating false
