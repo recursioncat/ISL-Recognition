@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, TextInput, FlatList, Text, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import io from 'socket.io-client';
-import { baseUrl } from '../utils';
+import { baseUrl } from '../../utils';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const socket = io(baseUrl);

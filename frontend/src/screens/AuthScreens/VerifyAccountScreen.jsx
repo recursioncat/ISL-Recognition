@@ -1,15 +1,10 @@
 import React, { useState, useContext } from 'react'
-import Background from '../components/Background'
-import BackButton from '../components/BackButton'
-import Logo from '../components/Logo'
-import Header from '../components/Header'
-import TextInput from '../components/TextInput'
-import Button from '../components/Button'
+import {Background, BackButton, Logo, Header, TextInput, Button} from '../../components'
 import Toast from 'react-native-toast-message';
 import axios from 'axios'
-import { baseUrl } from '../utils'
+import { baseUrl } from '../../utils'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { UserContext } from '../context/UserContext'
+import { UserContext } from '../../context/UserContext'
 
 export default function VerifyAccountScreen({ navigation, route }) {
     const [otp, setOtp] = useState({ value: '', error: '' });
