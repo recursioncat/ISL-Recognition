@@ -30,7 +30,7 @@ const ChatScreen = ({ navigation, route }) => {
             const messagesResponse = await axios.get(
               `${baseUrl}/api/v1/chat/messages/${senderResponse.data.data.id}/${recipientResponse.data.data.id}`
             );
-            console.log(messagesResponse.data.data);
+            // console.log(messagesResponse.data.data);
             const data = messagesResponse.data.data;
     
             if (data.messages.length !== 0) {

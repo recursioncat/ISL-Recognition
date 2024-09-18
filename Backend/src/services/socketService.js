@@ -3,11 +3,15 @@ import Message from '../models/messageModel.js';
 export default (io) => {
   io.on('connection', (socket) => {
     console.log('User connected', socket.id);
-
+    
     // Handle user joining a room for individual communication
+    let room = '';
+
     socket.on('joinRoom', ({ sender, recipient }) => {
       socket.join(sender);
       socket.join(recipient); // Ensure both users can communicate
+      console.log('User joined room:', socket.id);
+      room = socket.id;
     });
 
     // Handle sending a new message
@@ -23,7 +27,7 @@ export default (io) => {
         await message.save();
 
         // Emit the message to the recipient's room
-        io.to(recipient).emit('receiveMessage', message);
+        io.to(room).emit('receiveMessage', message);
 
         // Optionally, emit to the sender as well if needed
         // io.to(sender).emit('receiveMessage', message);
