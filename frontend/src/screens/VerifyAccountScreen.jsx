@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import Background from '../components/Background'
 import BackButton from '../components/BackButton'
 import Logo from '../components/Logo'
@@ -8,10 +8,13 @@ import Button from '../components/Button'
 import Toast from 'react-native-toast-message';
 import axios from 'axios'
 import { baseUrl } from '../utils'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { UserContext } from '../context/UserContext'
 
 export default function VerifyAccountScreen({ navigation, route }) {
     const [otp, setOtp] = useState({ value: '', error: '' });
     const { email } = route.params;
+    const { setUserEmail } = useContext(UserContext);
 
     const handleAccountVerification = async ({email , otp}) => {
         // Validate input
@@ -33,7 +36,7 @@ export default function VerifyAccountScreen({ navigation, route }) {
                 email,otp
             });
             
-            return response.data.statusCode;
+            return response.data;
     
         } catch (error) {
          
@@ -56,7 +59,9 @@ export default function VerifyAccountScreen({ navigation, route }) {
 
     const onVerifyPressed = async () => {
         const response = await handleAccountVerification({ email: email, otp: otp.value });
-        if (response === 200) {
+        if (response.statusCode === 200) {
+            await AsyncStorage.setItem('token' , response.data);
+            setUserEmail(email);
             Toast.show({
                 type: 'success',
                 text1: 'Account verified successfully',
@@ -68,6 +73,8 @@ export default function VerifyAccountScreen({ navigation, route }) {
                     routes: [{ name: 'Tabs' }]
                 }) }
             });
+            
+            
          
         }else{
             Toast.show({
