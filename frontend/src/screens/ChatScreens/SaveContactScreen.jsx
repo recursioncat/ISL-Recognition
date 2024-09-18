@@ -1,10 +1,10 @@
 import React, { useState, useContext } from 'react';
 import { View, TextInput, Button, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
 import axios from 'axios';
-import { UserContext } from '../context/UserContext';
-import { baseUrl } from '../utils';
+import { UserContext } from '../../context/UserContext';
+import { baseUrl } from '../../utils';
 import Toast from 'react-native-toast-message';
-import BackButton from '../components/BackButton';
+import {BackButton} from '../../components';
 
 
 const SaveContactScreen = ({ navigation }) => {
