@@ -22,6 +22,7 @@ export default function ContactsScreen({navigation}) {
           `${baseUrl}/api/v1/friend/get-friends/${userEmail}`,
         );
         setContacts(response.data.data);
+
         setLoading(false);
       } catch (error) {
         console.error('Error fetching contacts:', error);
