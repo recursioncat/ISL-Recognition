@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   TextInput,
@@ -6,17 +6,18 @@ import {
   Text,
   TouchableOpacity,
   ImageBackground,
+  Image, // Correct import for Image
 } from 'react-native';
 import axios from 'axios';
 import io from 'socket.io-client';
-import {baseUrl} from '../../utils';
+import { baseUrl } from '../../utils';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import DocumentPicker from 'react-native-document-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const socket = io(baseUrl);
 
-const ChatScreen = ({navigation, route}) => {
-
+const ChatScreen = ({ navigation, route }) => {
   const [message, setMessage] = useState({ message: '', mediaUrl: { url: '', type: '' } });
   const [chat, setChat] = useState([]);
   const [senderId, setSenderId] = useState('');
@@ -42,15 +43,8 @@ const ChatScreen = ({navigation, route}) => {
             `${baseUrl}/api/v1/chat/messages/${senderResponse.data.data.id}/${recipientResponse.data.data.id}`,
           );
           const data = messagesResponse.data.data;
-          if (data.messages.length !== 0) {
-            
-            setChat(data.messages);
-            
-          } else {
-            setChat([]);
-          }
+          setChat(data.messages.length !== 0 ? data.messages : []);
         } catch (error) {
-          
           console.error('Error fetching messages:', error);
         }
       } catch (error) {
@@ -79,28 +73,33 @@ const ChatScreen = ({navigation, route}) => {
   }, [senderId, recipientId]);
 
   const sendMessage = async () => {
+    // Only send if there is a text message or media URL
     if (message.message.trim() === '' && message.mediaUrl.url.trim() === '') return;
     if (!senderId || !recipientId) return;
 
     const messageObject = {
       sender: senderId,
       recipient: recipientId,
-      content: message,
+      content: message, // Send either message or mediaUrl
       timestamp: new Date(),
     };
-    
+
     socket.emit('sendMessage', messageObject);
-    
+
+    // Reset message state after sending
     setMessage({ message: '', mediaUrl: { url: '', type: '' } });
+    setFileResponse(null);  // Reset the file response after sending
   };
 
   const selectFile = async () => {
     try {
       const res = await DocumentPicker.pick({
-        type: [DocumentPicker.types.allFiles], // You can limit the types if needed
+        type: [DocumentPicker.types.allFiles],
       });
-      setFileResponse(res);
-      console.log('File selected:', res);
+      setFileResponse(res[0]);
+
+      // Update message to display file preview
+      setMessage({ message: '', mediaUrl: { url: '', type: '' } });
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         console.log('User canceled the file picker');
@@ -115,21 +114,31 @@ const ChatScreen = ({navigation, route}) => {
 
     const formData = new FormData();
     formData.append('mediaUpload', {
-      uri: fileResponse[0].uri,
-      type: fileResponse[0].type,
-      name: fileResponse[0].name,
+      uri: fileResponse.uri,
+      type: fileResponse.type,
+      name: fileResponse.name,
     });
 
     try {
       const response = await axios.post(`${baseUrl}/api/v1/sender/upload-media`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          'x-auth-token' : await AsyncStorage.getItem('token')
+          'x-auth-token': await AsyncStorage.getItem('token')
         },
       });
-      setMessage({mediaUrl: { url: response.data.data.url, type: response.data.data.resource_type}});
-      sendMessage();
 
+      // Send media message
+      const messageObject = {
+        sender: senderId,
+        recipient: recipientId,
+        content: { message: '', mediaUrl: { url: response.data.data.finalResult.url, type: response.data.data.finalResult.resource_type } }, 
+        timestamp: new Date(),
+      };
+
+      socket.emit('sendMessage', messageObject);
+      
+      setMessage({ message: '', mediaUrl: { url: '', type: '' } });
+      setFileResponse(null);
       console.log('File uploaded successfully:', response.data);
     } catch (error) {
       console.log('Error uploading file:', error);
@@ -145,12 +154,7 @@ const ChatScreen = ({navigation, route}) => {
     });
   };
 
-  const sendMedia = () => {
-    console.log('Sending media...');
-  }
-  
   const uniqueKey = (item, index) => index.toString();
-
 
   return (
     <View className="flex-1" style={{ backgroundColor: '#12191f' }}>
@@ -163,15 +167,17 @@ const ChatScreen = ({navigation, route}) => {
           keyExtractor={uniqueKey}
           renderItem={({ item }) => (
             <View
-              className={`mb-2 p-2 ${
-                item.sender === senderId ? 'self-end' : 'self-start'
-              } rounded-lg`}
+              className={`mb-2 p-2 ${item.sender === senderId ? 'self-end' : 'self-start'} rounded-lg`}
               style={{
                 backgroundColor: item.sender === senderId ? '#134d37' : '#1f2c34',
               }}>
-              <Text className="text-lg mt-1" style={{ color: '#f0f0f0' }}>
-                {item.content.message}
-              </Text>
+              {item.content.mediaUrl.url ? (
+                <Image source={{ uri: item.content.mediaUrl.url }} style={{ width: 100, height: 100 }} />
+              ) : (
+                <Text className="text-lg mt-1" style={{ color: '#f0f0f0' }}>
+                  {item.content.message}
+                </Text>
+              )}
               <Text className="text-xs text-gray-500 text-right">
                 {formatTime(item.timestamp)}
               </Text>
@@ -180,20 +186,27 @@ const ChatScreen = ({navigation, route}) => {
         />
         <View className="flex-row items-center mt-4">
           <View className="flex-row flex-1 relative">
-            <TextInput
-              value={message.message}
-              onChangeText={(text) => setMessage({ ...message, message: text })}
-              placeholder="Type a message..."
-              placeholderTextColor={'#a3a3a3'}
-              cursorColor={'white'}
-              className="flex-1 py-2 px-4 text-slate-300 rounded-3xl"
-              style={{
-                backgroundColor: '#1f2c34',
-                textAlignVertical: 'center',
-                minHeight: 40,
-              }}
-              multiline={true}
-            />
+            {fileResponse ? (
+              <Text className="flex-1 py-2 px-4 text-slate-300 rounded-3xl" style={{ backgroundColor: '#1f2c34' }}>
+                {fileResponse.name}
+              </Text>
+            ) : (
+              <TextInput
+                value={message.message} // Bind only text messages here
+                onChangeText={(text) => setMessage({ ...message, message: text })}
+                placeholder="Type a message..."
+                placeholderTextColor={'#a3a3a3'}
+                cursorColor={'white'}
+                className="flex-1 py-2 px-4 text-slate-300 rounded-3xl"
+                style={{
+                  backgroundColor: '#1f2c34',
+                  textAlignVertical: 'center',
+                  minHeight: 40,
+                }}
+                multiline={true}
+              />
+            )}
+
             {message.message === '' && (
               <>
                 <TouchableOpacity
@@ -208,7 +221,7 @@ const ChatScreen = ({navigation, route}) => {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  onPress={sendMedia}
+                  onPress={selectFile} // Placeholder for media picker
                   style={{
                     position: 'absolute',
                     right: 12,
@@ -222,10 +235,10 @@ const ChatScreen = ({navigation, route}) => {
           </View>
 
           <TouchableOpacity
-            onPress={sendMessage}
+            onPress={fileResponse ? uploadFile : sendMessage} // Upload file or send message
             className="ml-2 p-2 rounded-full"
             style={{ backgroundColor: '#21c063' }}>
-            <MaterialIcons name={message.message === '' ? 'mic' : 'send'} size={23} color={'black'} />
+            <MaterialIcons name={fileResponse ? 'send' : message.message === '' ? 'mic' : 'send'} size={23} color={'black'} />
           </TouchableOpacity>
         </View>
       </ImageBackground>
