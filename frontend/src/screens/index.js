@@ -12,3 +12,4 @@ export {default as ChatScreen} from './ChatScreens/ChatScreen';
 export {default as ContactsScreen} from './ChatScreens/ContactsScreen';
 export {default as SaveContactScreen} from './ChatScreens/SaveContactScreen';
 export {default as IntroScreen} from './IntroScreens/IntroScreen';
+export {default as FileUploadScreen} from './ChatScreens/FileUploadScreen';
