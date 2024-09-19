@@ -241,7 +241,7 @@ export const verifyEmail = async (req, res) => {
 
         user.save();
 
-        return responseHandler(res, 200, "success", "User verified successfully");
+        return responseHandler(res, 200, "success", "User verified successfully",token);
 
     }catch(error) {
         return errorResponseHandler(res, 500, "error", "Problem verifying user");

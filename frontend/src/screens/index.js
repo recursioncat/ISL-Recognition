@@ -1,13 +1,15 @@
 export { default as StartScreen } from './StartScreen'
-export { default as LoginScreen } from './LoginScreen'
-export { default as RegisterScreen } from './RegisterScreen'
-export { default as ResetPasswordScreen } from './ResetPasswordScreen'
-export {default as SplashScreen} from './SplashScreen';
+export { default as LoginScreen } from './AuthScreens/LoginScreen'
+export { default as RegisterScreen } from './AuthScreens/RegisterScreen'
+export { default as ResetPasswordScreen } from './AuthScreens/ResetPasswordScreen'
+export {default as SplashScreen} from './IntroScreens/SplashScreen';
 export {default as EngToSign} from './EngToSign';
-export {default as ForgotPassScreen} from './ForgotPassScreen';
-export {default as VerifyAccountScreen} from './VerifyAccountScreen';
+export {default as ForgotPassScreen} from './AuthScreens/ForgotPassScreen';
+export {default as VerifyAccountScreen} from './AuthScreens/VerifyAccountScreen';
 export {default as SignToText} from './SignToText';
 export {default as ProfileScreen} from './ProfileScreen';
-export {default as ChatScreen} from './ChatScreen';
-export {default as ContactsScreen} from './ContactsScreen';
-export {default as SaveContactScreen} from './SaveContactScreen';
+export {default as ChatScreen} from './ChatScreens/ChatScreen';
+export {default as ContactsScreen} from './ChatScreens/ContactsScreen';
+export {default as SaveContactScreen} from './ChatScreens/SaveContactScreen';
+export {default as IntroScreen} from './IntroScreens/IntroScreen';
+export {default as FileUploadScreen} from './ChatScreens/FileUploadScreen';

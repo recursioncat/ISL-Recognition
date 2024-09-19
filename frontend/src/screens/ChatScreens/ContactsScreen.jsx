@@ -1,10 +1,10 @@
-import React, {useEffect, useState, useContext, useCallback} from 'react';
+import {useEffect, useState, useContext, useCallback} from 'react';
 import {View, Image, FlatList, TouchableOpacity, StatusBar} from 'react-native';
 import {Text} from 'react-native-paper';
 import axios from 'axios';
-import {baseUrl} from '../utils';
-import {UserContext} from '../context/UserContext'; // Import UserContext
-import SaveContactIcon from '../components/SaveContactIcon';
+import {baseUrl} from '../../utils';
+import {UserContext} from '../../context/UserContext'; // Import UserContext
+import {SaveContactIcon} from '../../components';
 import {useFocusEffect} from '@react-navigation/native';
 
 export default function ContactsScreen({navigation}) {
@@ -22,6 +22,7 @@ export default function ContactsScreen({navigation}) {
           `${baseUrl}/api/v1/friend/get-friends/${userEmail}`,
         );
         setContacts(response.data.data);
+
         setLoading(false);
       } catch (error) {
         console.error('Error fetching contacts:', error);

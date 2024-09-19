@@ -1,15 +1,10 @@
 import React, { useState } from 'react'
-import Background from '../components/Background'
-import BackButton from '../components/BackButton'
-import Logo from '../components/Logo'
-import Header from '../components/Header'
-import TextInput from '../components/TextInput'
-import Button from '../components/Button'
-import { emailValidator } from '../helpers/emailValidator'
-import { passwordValidator } from '../helpers/passwordValidator'
+import {Background , BackButton , Logo , Header , TextInput , Button} from '../../components'
+import { emailValidator } from '../../helpers/emailValidator'
+import { passwordValidator } from '../../helpers/passwordValidator'
 import Toast from 'react-native-toast-message';
 import axios from 'axios'
-import { baseUrl } from '../utils'
+import { baseUrl } from '../../utils'
 
 export default function ForgotPassScreen({ navigation, route }) {
     
@@ -90,6 +85,7 @@ export default function ForgotPassScreen({ navigation, route }) {
     }
   
     return (
+      <>
       <Background>
         <BackButton goBack={navigation.goBack} />
         <Logo />
@@ -133,5 +129,6 @@ export default function ForgotPassScreen({ navigation, route }) {
           Send Instructions
         </Button>
       </Background>
+      </>
     )
   }

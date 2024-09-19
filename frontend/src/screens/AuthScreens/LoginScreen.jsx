@@ -1,23 +1,20 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { TouchableOpacity, StyleSheet, View } from 'react-native'
 import { Text } from 'react-native-paper'
-import Background from '../components/Background'
-import Logo from '../components/Logo'
-import Header from '../components/Header'
-import Button from '../components/Button'
-import TextInput from '../components/TextInput'
-import { theme } from '../core/theme'
-import { emailValidator } from '../helpers/emailValidator'
-import { passwordValidator } from '../helpers/passwordValidator'
-import LoginIcons from '../components/LoginIcons'
+import {Background , Logo, Header, Button, TextInput , LoginIcons} from '../../components'
+import { theme } from '../../core/theme'
+import { emailValidator } from '../../helpers/emailValidator'
+import { passwordValidator } from '../../helpers/passwordValidator'
 import Toast from 'react-native-toast-message';
 import axios from 'axios'
-import { baseUrl } from '../utils'
+import { baseUrl } from '../../utils'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { UserContext } from '../../context/UserContext'; // Import UserContext
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState({ value: '', error: '' })
   const [password, setPassword] = useState({ value: '', error: '' })
+  const {setUserEmail} = useContext(UserContext);
 
   const handleLogin = async ({ email, password }) => {
     // Validate input
@@ -71,6 +68,7 @@ export default function LoginScreen({ navigation }) {
 
     if (response.statusCode == "200") {
       await AsyncStorage.setItem('token', response.data);
+      setUserEmail(email.value);
       Toast.show({
         type: 'success',
         text1: 'User Login successful',

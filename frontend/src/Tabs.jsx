@@ -4,6 +4,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import TranslatorNavigator from './TranslatorNavigator';
 import ChatingNavigator from './ChatingNavigator';
 import ProfileScreen from './screens/ProfileScreen';
+import { FileUploadScreen } from './screens';
 
 
 
@@ -27,7 +28,7 @@ function Tabs() {
       ),
       headerShown: false
     }} />
-    <Tab.Screen name="Account" component={ProfileScreen} options={{
+    <Tab.Screen name="Account" component={FileUploadScreen} options={{
       tabBarLabel: 'Account',
       tabBarIcon: ({ color, size }) => (
         <MaterialIcons name="account-circle" color={color} size={size} />
