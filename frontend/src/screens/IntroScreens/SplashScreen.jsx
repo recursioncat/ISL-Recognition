@@ -10,6 +10,7 @@ const SplashScreen = ({ navigation }) => {
   useEffect(() => {
     const checkAuthentication = async () => {
       const token = await AsyncStorage.getItem('token');
+      
       if (!token) {
         setAnimating(false); // Set animating false when check is done
         navigation.replace('IntroScreen'); // Navigate to login if no token
