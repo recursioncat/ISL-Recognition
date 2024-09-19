@@ -1,6 +1,6 @@
 import React from 'react';
-import {View, Text, Image, StatusBar, StyleSheet} from 'react-native';
-import { GradientButton } from '../../components';
+import {View, Text, Image, StatusBar, StyleSheet, } from 'react-native';
+import { GradientBackground, GradientButton } from '../../components';
 import LinearGradient from 'react-native-linear-gradient'; // Fix import
 
 const IntroScreen = ({navigation}) => {
@@ -13,6 +13,7 @@ const IntroScreen = ({navigation}) => {
       <StatusBar backgroundColor="#000000" />
 
       {/* Top gradient for the status bar */}
+      <GradientBackground/>
 
       {/* Image displayed smaller within the container */}
       <View style={styles.imageContainer}>
@@ -22,7 +23,7 @@ const IntroScreen = ({navigation}) => {
         />
         {/* Gradient for the bottom fading effect */}
         <LinearGradient
-          colors={['transparent', 'rgba(0, 0, 0, 1)']} // From transparent to black
+          colors={['transparent', 'rgba(0, 0, 0, 0.9)']} // From transparent to black
           style={styles.imageOverlay}
         />
       </View>
