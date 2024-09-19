@@ -14,16 +14,20 @@ import { baseUrl } from '../../utils';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import DocumentPicker from 'react-native-document-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Video from 'react-native-video';
 
 const socket = io(baseUrl);
 
-const ChatScreen = ({ navigation, route }) => {
-  const [message, setMessage] = useState({ message: '', mediaUrl: { url: '', type: '' } });
+const ChatScreen = ({navigation, route}) => {
+  const [message, setMessage] = useState({
+    message: '',
+    mediaUrl: {url: '', type: ''},
+  });
   const [chat, setChat] = useState([]);
   const [senderId, setSenderId] = useState('');
   const [recipientId, setRecipientId] = useState('');
   const [fileResponse, setFileResponse] = useState(null);
-  const { sender, recipient } = route.params;
+  const {sender, recipient} = route.params;
 
   useEffect(() => {
     const fetchUserIds = async () => {
@@ -60,12 +64,12 @@ const ChatScreen = ({ navigation, route }) => {
     fetchUserIds();
 
     if (senderId && recipientId) {
-      socket.emit('joinRoom', { sender: senderId, recipient: recipientId });
+      socket.emit('joinRoom', {sender: senderId, recipient: recipientId});
       console.log('Joined room');
 
-      socket.on('receiveMessage', (message) => {
+      socket.on('receiveMessage', message => {
         console.log('Received message:', message);
-        setChat((prevChat) => [...prevChat, message]);
+        setChat(prevChat => [...prevChat, message]);
       });
 
       return () => {
@@ -76,7 +80,8 @@ const ChatScreen = ({ navigation, route }) => {
 
   const sendMessage = async () => {
     // Only send if there is a text message or media URL
-    if (message.message.trim() === '' && message.mediaUrl.url.trim() === '') return;
+    if (message.message.trim() === '' && message.mediaUrl.url.trim() === '')
+      return;
     if (!senderId || !recipientId) return;
 
     const messageObject = {
@@ -89,8 +94,8 @@ const ChatScreen = ({ navigation, route }) => {
     socket.emit('sendMessage', messageObject);
 
     // Reset message state after sending
-    setMessage({ message: '', mediaUrl: { url: '', type: '' } });
-    setFileResponse(null);  // Reset the file response after sending
+    setMessage({message: '', mediaUrl: {url: '', type: ''}});
+    setFileResponse(null); // Reset the file response after sending
   };
 
   const selectFile = async () => {
@@ -101,7 +106,7 @@ const ChatScreen = ({ navigation, route }) => {
       setFileResponse(res[0]);
 
       // Update message to display file preview
-      setMessage({ message: '', mediaUrl: { url: '', type: '' } });
+      setMessage({message: '', mediaUrl: {url: '', type: ''}});
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
         console.log('User canceled the file picker');
@@ -122,24 +127,34 @@ const ChatScreen = ({ navigation, route }) => {
     });
 
     try {
-      const response = await axios.post(`${baseUrl}/api/v1/sender/upload-media`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'x-auth-token': await AsyncStorage.getItem('token')
+      const response = await axios.post(
+        `${baseUrl}/api/v1/sender/upload-media`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'x-auth-token': await AsyncStorage.getItem('token'),
+          },
         },
-      });
+      );
 
       // Send media message
       const messageObject = {
         sender: senderId,
         recipient: recipientId,
-        content: { message: '', mediaUrl: { url: response.data.data.finalResult.url, type: response.data.data.finalResult.resource_type } }, 
+        content: {
+          message: '',
+          mediaUrl: {
+            url: response.data.data.finalResult.url,
+            type: response.data.data.finalResult.resource_type,
+          },
+        },
         timestamp: new Date(),
       };
 
       socket.emit('sendMessage', messageObject);
-      
-      setMessage({ message: '', mediaUrl: { url: '', type: '' } });
+
+      setMessage({message: '', mediaUrl: {url: '', type: ''}});
       setFileResponse(null);
       console.log('File uploaded successfully:', response.data);
     } catch (error) {
@@ -147,7 +162,7 @@ const ChatScreen = ({ navigation, route }) => {
     }
   };
 
-  const formatTime = (timestamp) => {
+  const formatTime = timestamp => {
     const date = new Date(timestamp);
     return date.toLocaleTimeString([], {
       hour: '2-digit',
@@ -159,7 +174,7 @@ const ChatScreen = ({ navigation, route }) => {
   const uniqueKey = (item, index) => index.toString();
 
   return (
-    <View className="flex-1" style={{ backgroundColor: '#12191f' }}>
+    <View className="flex-1" style={{backgroundColor: '#12191f'}}>
       <ImageBackground
         source={require('../../assets/w-b-g.jpg')}
         resizeMode="cover"
@@ -167,16 +182,28 @@ const ChatScreen = ({ navigation, route }) => {
         <FlatList
           data={chat}
           keyExtractor={uniqueKey}
-          renderItem={({ item }) => (
+          renderItem={({item}) => (
             <View
               className={`mb-2 p-2 ${item.sender === senderId ? 'self-end' : 'self-start'} rounded-lg`}
               style={{
-                backgroundColor: item.sender === senderId ? '#134d37' : '#1f2c34',
+                backgroundColor:
+                  item.sender === senderId ? '#134d37' : '#1f2c34',
               }}>
               {item.content.mediaUrl.url !== '' ? (
-                <Image source={{ uri: item.content.mediaUrl.url }} style={{ width: 100, height: 100 }} />
+                item.content.mediaUrl.type === 'image' ? (
+                  <Image
+                    source={{uri: item.content.mediaUrl.url}}
+                    style={{width: 100, height: 100}}
+                  />
+                ) : (
+                  <Video
+                    source={{uri: item.content.mediaUrl.url}}
+                    style={{width: 100, height: 100}}
+                    // Add controls, resizeMode, etc. as needed
+                  />
+                )
               ) : (
-                <Text className="text-lg mt-1" style={{ color: '#f0f0f0' }}>
+                <Text className="text-lg mt-1" style={{color: '#f0f0f0'}}>
                   {item.content.message}
                 </Text>
               )}
@@ -189,13 +216,15 @@ const ChatScreen = ({ navigation, route }) => {
         <View className="flex-row items-center mt-4">
           <View className="flex-row flex-1 relative">
             {fileResponse ? (
-              <Text className="flex-1 py-2 px-4 text-slate-300 rounded-3xl" style={{ backgroundColor: '#1f2c34' }}>
+              <Text
+                className="flex-1 py-2 px-4 text-slate-300 rounded-3xl"
+                style={{backgroundColor: '#1f2c34'}}>
                 {fileResponse.name}
               </Text>
             ) : (
               <TextInput
                 value={message.message} // Bind only text messages here
-                onChangeText={(text) => setMessage({ ...message, message: text })}
+                onChangeText={text => setMessage({...message, message: text})}
                 placeholder="Type a message..."
                 placeholderTextColor={'#a3a3a3'}
                 cursorColor={'white'}
@@ -217,7 +246,7 @@ const ChatScreen = ({ navigation, route }) => {
                     position: 'absolute',
                     right: 48,
                     top: '50%',
-                    transform: [{ translateY: -12 }],
+                    transform: [{translateY: -12}],
                   }}>
                   <MaterialIcons name="attach-file" size={23} color={'white'} />
                 </TouchableOpacity>
@@ -228,9 +257,13 @@ const ChatScreen = ({ navigation, route }) => {
                     position: 'absolute',
                     right: 12,
                     top: '50%',
-                    transform: [{ translateY: -12 }],
+                    transform: [{translateY: -12}],
                   }}>
-                  <MaterialIcons name="photo-camera" size={23} color={'white'} />
+                  <MaterialIcons
+                    name="photo-camera"
+                    size={23}
+                    color={'white'}
+                  />
                 </TouchableOpacity>
               </>
             )}
@@ -239,8 +272,14 @@ const ChatScreen = ({ navigation, route }) => {
           <TouchableOpacity
             onPress={fileResponse ? uploadFile : sendMessage} // Upload file or send message
             className="ml-2 p-2 rounded-full"
-            style={{ backgroundColor: '#21c063' }}>
-            <MaterialIcons name={fileResponse ? 'send' : message.message === '' ? 'mic' : 'send'} size={23} color={'black'} />
+            style={{backgroundColor: '#21c063'}}>
+            <MaterialIcons
+              name={
+                fileResponse ? 'send' : message.message === '' ? 'mic' : 'send'
+              }
+              size={23}
+              color={'black'}
+            />
           </TouchableOpacity>
         </View>
       </ImageBackground>
