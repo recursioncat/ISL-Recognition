@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {
   View,
   TextInput,
@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ImageBackground,
   Image,
+  Keyboard
 } from 'react-native';
 import axios from 'axios';
 import io from 'socket.io-client';
@@ -29,6 +30,8 @@ const ChatScreen = ({navigation, route}) => {
   const [fileResponse, setFileResponse] = useState(null);
   const [profilePicture, setProfilePicture] = useState(null); // State to hold profile picture URL
   const {sender, recipient , recipientName} = route.params;
+  const flatListRef = useRef(); // Create FlatList reference
+
 
   useEffect(() => {
   
@@ -137,6 +140,7 @@ const ChatScreen = ({navigation, route}) => {
         type: [DocumentPicker.types.allFiles],
       });
       setFileResponse(res[0]);
+      console.log('File selected:', res);
       setMessage({message: '', mediaUrl: {url: '', type: ''}});
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
@@ -201,15 +205,30 @@ const ChatScreen = ({navigation, route}) => {
 
   const uniqueKey = (item, index) => index.toString();
 
+  // Scroll to the end when chat data changes
+  useEffect(() => {
+    if (flatListRef.current) {
+      flatListRef.current.scrollToEnd({animated: true});
+    }
+  }, [chat]);
+
+  const handleImagePress = (imageUrl) => {
+    navigation.navigate('ImageViewer', { imageUrl });
+  };
+
   return (
     <View className="flex-1" style={{backgroundColor: '#12191f'}}>
       <ImageBackground
         source={require('../../assets/w-b-g.jpg')}
         resizeMode="cover"
-        className="px-3 py-3 flex-1 justify-center">
+        className="py-3 flex-1 justify-center">
+        
         <FlatList
+        className="px-3"
           data={chat}
+          ref={flatListRef}
           keyExtractor={uniqueKey}
+          onContentSizeChange={() => flatListRef.current.scrollToEnd({animated: true})}
           renderItem={({item}) => (
             <View
               className={`mb-2 p-2 ${
@@ -221,14 +240,18 @@ const ChatScreen = ({navigation, route}) => {
               }}>
               {item.content.mediaUrl.url !== '' ? (
                 item.content.mediaUrl.type === 'image' ? (
+                  <TouchableOpacity onPress={() => handleImagePress(item.content.mediaUrl.url)}>
                   <Image
                     source={{uri: item.content.mediaUrl.url}}
-                    style={{width: 100, height: 100}}
+                    style={{ width: '70%', height: undefined, aspectRatio: 1 , alignSelf: 'center',}} // Adjust aspectRatio as needed
+                    resizeMode="cover" // This maintains the aspect ratio and fits within the container
                   />
+                  </TouchableOpacity>
                 ) : (
                   <Video
                     source={{uri: item.content.mediaUrl.url}}
-                    style={{width: 100, height: 100}}
+                    style={{ width: '60%', height: undefined, aspectRatio: 1 , maxHeight:300}} // Adjust aspectRatio as needed
+                    resizeMode="cover" // This maintains the aspect ratio and fits within the container
                   />
                 )
               ) : (
@@ -242,7 +265,8 @@ const ChatScreen = ({navigation, route}) => {
             </View>
           )}
         />
-        <View className="flex-row items-center mt-4">
+       
+        <View className="flex-row items-center mt-4 px-3">
           <View className="flex-row flex-1 relative">
             {fileResponse ? (
               <Text

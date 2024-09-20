@@ -32,7 +32,7 @@ function Tabs() {
           ),
           headerShown: false,
             tabBarStyle: {
-              display: getFocusedRouteNameFromRoute(route) === 'ChatScreen' ? 'none' : 'flex'
+              display: getFocusedRouteNameFromRoute(route) === 'ChatScreen' || 'ImageViewer' ? 'none' : 'flex'
             },
         })}
       />

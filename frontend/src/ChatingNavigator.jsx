@@ -1,6 +1,6 @@
 import React,{useEffect} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import {ContactsScreen, ChatScreen, SaveContactScreen} from './screens/index';
+import {ContactsScreen, ChatScreen, SaveContactScreen, ImageViewer} from './screens/index';
 
 
 const Stack = createStackNavigator();
@@ -23,6 +23,7 @@ export default function ChatingNavigator() {
           headerShown: true, // Show the header as needed
         }}
       />
+      <Stack.Screen name="ImageViewer" component={ImageViewer} />
     </Stack.Navigator>
   );
 }
