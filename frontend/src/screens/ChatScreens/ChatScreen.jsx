@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useRef, act} from 'react';
 import {
   View,
   TextInput,
@@ -7,7 +7,10 @@ import {
   TouchableOpacity,
   ImageBackground,
   Image,
-  Keyboard
+  Keyboard,
+  StyleSheet,
+  Animated,
+  TouchableWithoutFeedback
 } from 'react-native';
 import axios from 'axios';
 import io from 'socket.io-client';
@@ -29,12 +32,16 @@ const ChatScreen = ({navigation, route}) => {
   const [recipientId, setRecipientId] = useState('');
   const [fileResponse, setFileResponse] = useState(null);
   const [profilePicture, setProfilePicture] = useState(null); // State to hold profile picture URL
-  const {sender, recipient , recipientName} = route.params;
-  const flatListRef = useRef(); // Create FlatList reference
+  const {sender, recipient, recipientName} = route.params;
+  const flatListRef = useRef(null); // Create FlatList reference
+  const videoRef = useRef(null); // Reference to the video player
+  const [panelVisible, setPanelVisible] = useState(false);
+  const [panelPosition, setPanelPosition] = useState({x: 0, y: 0});
+  const [selectedMessageId, setSelectedMessageId] = useState(null);
+  const [activeItemId, setActiveItemId] = useState(null); // State to track the active item
 
 
   useEffect(() => {
-  
     const fetchUserIds = async () => {
       try {
         const senderResponse = await axios.get(
@@ -212,60 +219,187 @@ const ChatScreen = ({navigation, route}) => {
     }
   }, [chat]);
 
-  const handleImagePress = (imageUrl) => {
-    navigation.navigate('ImageViewer', { imageUrl });
+  const handleImagePress = ({imageUrl, senderName, videoUrl, type}) => {
+    navigation.navigate('ImageViewer', {imageUrl, senderName, videoUrl, type});
   };
 
+  const [longPressTimer, setLongPressTimer] = useState(null);
+
+  const handleLongPressStart = (event, item) => {
+    const { pageX, pageY } = event.nativeEvent;
+  const timer = setTimeout(() => {
+    console.log('Long press started');
+    setPanelPosition({ x: pageX, y: pageY });
+    setPanelVisible(true);
+    setSelectedMessageId(item.id); // Assuming each message has a unique 'id'
+    setActiveItemId(item._id); // Set the active item
+    console.log('Selected message ID:', selectedMessageId);
+    console.log('Active item ID:', activeItemId);
+  }, 1000);
+
+  setLongPressTimer(timer);
+  };
+
+  const handleLongPressEnd = () => {
+    clearTimeout(longPressTimer);
+  };
+
+  const handleOverlayPress = () => {
+    console.log('Overlay pressed');
+    if (panelVisible) {
+      setPanelVisible(false);
+      setSelectedMessageId(null); // Reset the selected message
+      setActiveItemId(null); // Reset the active item
+
+    }
+  };
+
+  const handlePanelAction = action => {
+   
+    console.log('Panel action:', action);
+    setPanelVisible(false);
+    setSelectedMessageId(null); // Reset the selected message
+    setActiveItemId(null); // Reset the active item
+  };
+
+  const renderItem = ({ item }) => (
+    <TouchableOpacity
+      onPressIn={(event) =>{
+      handleLongPressStart(event, item) 
+      // setActiveItemId(item._id);
+      }}
+      onPressOut={() => {
+        handleLongPressEnd();
+      }}
+      activeOpacity={0.9}
+    >
+     <View>
+      <View
+        className={`mb-2 p-2 ${item.sender === senderId ? 'self-end' : 'self-start'
+          } rounded-lg`}
+        style={{
+          backgroundColor: item.sender === senderId ? '#134d37' : '#1f2c34',
+        }}
+      >
+        {item.content.mediaUrl.url !== '' ? (
+          item.content.mediaUrl.type === 'image' ? (
+            <TouchableOpacity
+              onPress={() =>
+                handleImagePress({
+                  imageUrl: item.content.mediaUrl.url,
+                  senderName: recipientName,
+                  type: 'image',
+                })
+              }
+              style={{ alignSelf: 'center' }}
+              activeOpacity={0.9}
+            >
+              <Image
+                source={{ uri: item.content.mediaUrl.url }}
+                style={{
+                  width: '70%',
+                  height: undefined,
+                  aspectRatio: 1,
+                }}
+                resizeMode="cover"
+              />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={() =>
+                handleImagePress({
+                  videoUrl: item.content.mediaUrl.url,
+                  senderName: recipientName,
+                  type: 'video',
+                })
+              }
+              style={{ alignSelf: 'center' }}
+              activeOpacity={0.9}
+            >
+              <Video
+                source={{ uri: item.content.mediaUrl.url }}
+                ref={videoRef}
+                paused={true}
+                style={{
+                  width: '70%',
+                  height: undefined,
+                  aspectRatio: 1,
+                }}
+                resizeMode="cover"
+              />
+              <MaterialIcons
+                name="play-circle-outline"
+                size={50}
+                color="white"
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: 115,
+                  transform: [{ translateX: -25 }, { translateY: -25 }],
+                }}
+              />
+            </TouchableOpacity>
+          )
+        ) : (
+          <Text className="text-lg mt-1" style={{ color: '#f0f0f0' }}>
+            {item.content.message}
+          </Text>
+        )}
+        <Text className="text-xs text-gray-500 text-right">
+          {formatTime(item.timestamp)}
+        </Text>
+        {activeItemId === item._id ? (
+            <Animated.View
+              className="flex-row bg-slate-200 p-3 justify-around w-2/4 border-solid rounded-3xl"
+              style={{
+                position: 'absolute',
+                top: 40,
+                right: 20,
+              }}
+            >
+              <TouchableOpacity onPress={() => handlePanelAction('edit')}>
+                <MaterialIcons name="edit" size={24} color="black" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => handlePanelAction('delete')}>
+                <MaterialIcons name="delete" size={24} color="black" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => handlePanelAction('reply')}>
+                <MaterialIcons name="reply" size={24} color="black" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => handlePanelAction('close')}>
+                <MaterialIcons name="close" size={24} color="black" />
+              </TouchableOpacity>
+            </Animated.View>
+          ) :
+          null
+          }
+      </View>
+      </View>
+
+    </TouchableOpacity>
+  );
+
   return (
-    <View className="flex-1" style={{backgroundColor: '#12191f'}}>
+    <TouchableWithoutFeedback onPress={handleOverlayPress}>
+    <View className="flex-1" style={{ backgroundColor: '#12191f' }}>
       <ImageBackground
         source={require('../../assets/w-b-g.jpg')}
         resizeMode="cover"
-        className="py-3 flex-1 justify-center">
-        
+        className="py-3 flex-1 justify-center"
+      >
         <FlatList
-        className="px-3"
+          className="px-3"
           data={chat}
           ref={flatListRef}
-          keyExtractor={uniqueKey}
-          onContentSizeChange={() => flatListRef.current.scrollToEnd({animated: true})}
-          renderItem={({item}) => (
-            <View
-              className={`mb-2 p-2 ${
-                item.sender === senderId ? 'self-end' : 'self-start'
-              } rounded-lg`}
-              style={{
-                backgroundColor:
-                  item.sender === senderId ? '#134d37' : '#1f2c34',
-              }}>
-              {item.content.mediaUrl.url !== '' ? (
-                item.content.mediaUrl.type === 'image' ? (
-                  <TouchableOpacity onPress={() => handleImagePress(item.content.mediaUrl.url)}>
-                  <Image
-                    source={{uri: item.content.mediaUrl.url}}
-                    style={{ width: '70%', height: undefined, aspectRatio: 1 , alignSelf: 'center',}} // Adjust aspectRatio as needed
-                    resizeMode="cover" // This maintains the aspect ratio and fits within the container
-                  />
-                  </TouchableOpacity>
-                ) : (
-                  <Video
-                    source={{uri: item.content.mediaUrl.url}}
-                    style={{ width: '60%', height: undefined, aspectRatio: 1 , maxHeight:300}} // Adjust aspectRatio as needed
-                    resizeMode="cover" // This maintains the aspect ratio and fits within the container
-                  />
-                )
-              ) : (
-                <Text className="text-lg mt-1" style={{color: '#f0f0f0'}}>
-                  {item.content.message}
-                </Text>
-              )}
-              <Text className="text-xs text-gray-500 text-right">
-                {formatTime(item.timestamp)}
-              </Text>
-            </View>
-          )}
+          keyExtractor={(item) => item._id.toString()}
+          onContentSizeChange={() => flatListRef.current.scrollToEnd({ animated: true })}
+          onLayout={() => flatListRef.current.scrollToEnd({ animated: true })}
+          initialNumToRender={10}
+          windowSize={5}
+          renderItem={renderItem}
         />
-       
+
+
         <View className="flex-row items-center mt-4 px-3">
           <View className="flex-row flex-1 relative">
             {fileResponse ? (
@@ -337,7 +471,9 @@ const ChatScreen = ({navigation, route}) => {
         </View>
       </ImageBackground>
     </View>
+    </TouchableWithoutFeedback>
   );
 };
+
 
 export default ChatScreen;

@@ -4,7 +4,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import TranslatorNavigator from './TranslatorNavigator';
 import ChatingNavigator from './ChatingNavigator';
 import ProfileScreen from './screens/ProfileScreen';
-import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
+import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 const Tab = createBottomTabNavigator();
 
 function Tabs() {
@@ -25,15 +25,20 @@ function Tabs() {
       <Tab.Screen
         name="Call"
         component={ChatingNavigator}
-        options={({ route }) => ({
+        options={({route}) => ({
           tabBarLabel: 'Call',
           tabBarIcon: ({color, size}) => (
             <MaterialIcons name="phone" color={color} size={size} />
           ),
           headerShown: false,
-            tabBarStyle: {
-              display: getFocusedRouteNameFromRoute(route) === 'ChatScreen' || 'ImageViewer' ? 'none' : 'flex'
-            },
+          tabBarStyle: {
+            // Hide the tab bar for both 'ChatScreen' and 'ImageViewer'
+            display: ['ChatScreen', 'ImageViewer'].includes(
+              getFocusedRouteNameFromRoute(route),
+            )
+              ? 'none'
+              : 'flex',
+          },
         })}
       />
       <Tab.Screen
