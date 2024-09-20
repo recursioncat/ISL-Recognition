@@ -3,7 +3,7 @@ from dependencies import *
 import os
 
 app = Flask(__name__)
-model = keras.models.load_model('gesturesv14.keras')
+model = keras.models.load_model('gesturesv13.keras')
 class_names = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q','r','s']
 
 
