@@ -26,3 +26,24 @@ export const sendImageAi = async (req, res) => {
         return errorResponseHandler(res, 500, 'error', 'Problem uploading ai picture');
 }
 }
+
+export const sendImageFromUrl = async (req, res) => {
+    try {
+        const {url} = req.body;
+
+        if (!url) {
+            return errorResponseHandler(res, 400, 'error', 'Please upload an image');
+        }
+        
+        // path needs to be changed to the path of the image on the server
+        const apiDataUpload = await axios.post('http://127.0.0.1:5000/predictfromurl', {"url" : url}).then((response) => {
+            console.log(response.data);
+            return responseHandler(res, 200, 'success', 'server picture uploaded successfully', { predictedData: response.data });
+        }).catch((error) => {
+            return errorResponseHandler(res, 500, 'error', 'Problem uploading ai picture');
+        })
+        
+    } catch (error) {
+        return errorResponseHandler(res, 500, 'error', 'Problem uploading ai picture');
+}
+}
