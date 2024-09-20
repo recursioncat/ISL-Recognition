@@ -22,11 +22,14 @@ def predict():
 def predictfromurl():
     data = request.get_json(force = True)
     url = data['url']
+    
     download_image(url)
     image_array = processImage('image.jpeg')
     prediction = model.predict(image_array)
     
+    os.remove('image.jpeg')
     return jsonify(class_names[np.argmax(prediction)].lower())
+    
     
 
 
