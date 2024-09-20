@@ -6,7 +6,7 @@ import {
   Text,
   TouchableOpacity,
   ImageBackground,
-  Image, // Correct import for Image
+  Image,
 } from 'react-native';
 import axios from 'axios';
 import io from 'socket.io-client';
@@ -27,9 +27,11 @@ const ChatScreen = ({navigation, route}) => {
   const [senderId, setSenderId] = useState('');
   const [recipientId, setRecipientId] = useState('');
   const [fileResponse, setFileResponse] = useState(null);
-  const {sender, recipient} = route.params;
+  const [profilePicture, setProfilePicture] = useState(null); // State to hold profile picture URL
+  const {sender, recipient , recipientName} = route.params;
 
   useEffect(() => {
+  
     const fetchUserIds = async () => {
       try {
         const senderResponse = await axios.get(
@@ -42,14 +44,24 @@ const ChatScreen = ({navigation, route}) => {
         setSenderId(senderResponse.data.data.id);
         setRecipientId(recipientResponse.data.data.id);
 
+        // Fetch profile picture
+        const recipientProfileResponse = await axios.get(
+          `${baseUrl}/api/v1/user/getProfilePicture/${recipientResponse.data.data.id}`,
+          {
+            headers: {
+              'x-auth-token': await AsyncStorage.getItem('token'),
+            },
+          },
+        );
+
+        setProfilePicture(recipientProfileResponse.data.data);
+
         try {
           const messagesResponse = await axios.get(
             `${baseUrl}/api/v1/chat/messages/${senderResponse.data.data.id}/${recipientResponse.data.data.id}`,
           );
           const data = messagesResponse.data.data;
-          console.log('Fetched messages:', data.messages);
           setChat(data.messages.length !== 0 ? data.messages : []);
-          console.log('Chat:', chat);
         } catch (error) {
           console.error('Error fetching messages:', error);
         }
@@ -65,10 +77,8 @@ const ChatScreen = ({navigation, route}) => {
 
     if (senderId && recipientId) {
       socket.emit('joinRoom', {sender: senderId, recipient: recipientId});
-      console.log('Joined room');
 
       socket.on('receiveMessage', message => {
-        console.log('Received message:', message);
         setChat(prevChat => [...prevChat, message]);
       });
 
@@ -78,8 +88,32 @@ const ChatScreen = ({navigation, route}) => {
     }
   }, [senderId, recipientId]);
 
+  // Set the profile picture in the header
+  useEffect(() => {
+    if (profilePicture) {
+      navigation.setOptions({
+        headerLeft: () => (
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <MaterialIcons name="arrow-back" size={24} color="white" />
+            </TouchableOpacity>
+            <Image
+              source={{uri: profilePicture}}
+              style={{width: 40, height: 40, borderRadius: 20, marginLeft: 10}}
+            />
+          </View>
+        ),
+        headerRight: () => (
+          <TouchableOpacity className="mr-5">
+            <MaterialIcons name="videocam" size={30} color="white" />
+          </TouchableOpacity>
+        ),
+        headerTitle: recipientName, // Display recipient name next to profile pic
+      });
+    }
+  }, [profilePicture]);
+
   const sendMessage = async () => {
-    // Only send if there is a text message or media URL
     if (message.message.trim() === '' && message.mediaUrl.url.trim() === '')
       return;
     if (!senderId || !recipientId) return;
@@ -87,15 +121,14 @@ const ChatScreen = ({navigation, route}) => {
     const messageObject = {
       sender: senderId,
       recipient: recipientId,
-      content: message, // Send either message or mediaUrl
+      content: message,
       timestamp: new Date(),
     };
 
     socket.emit('sendMessage', messageObject);
 
-    // Reset message state after sending
     setMessage({message: '', mediaUrl: {url: '', type: ''}});
-    setFileResponse(null); // Reset the file response after sending
+    setFileResponse(null);
   };
 
   const selectFile = async () => {
@@ -104,8 +137,6 @@ const ChatScreen = ({navigation, route}) => {
         type: [DocumentPicker.types.allFiles],
       });
       setFileResponse(res[0]);
-
-      // Update message to display file preview
       setMessage({message: '', mediaUrl: {url: '', type: ''}});
     } catch (err) {
       if (DocumentPicker.isCancel(err)) {
@@ -138,7 +169,6 @@ const ChatScreen = ({navigation, route}) => {
         },
       );
 
-      // Send media message
       const messageObject = {
         sender: senderId,
         recipient: recipientId,
@@ -153,10 +183,8 @@ const ChatScreen = ({navigation, route}) => {
       };
 
       socket.emit('sendMessage', messageObject);
-
       setMessage({message: '', mediaUrl: {url: '', type: ''}});
       setFileResponse(null);
-      console.log('File uploaded successfully:', response.data);
     } catch (error) {
       console.log('Error uploading file:', error);
     }
@@ -201,7 +229,6 @@ const ChatScreen = ({navigation, route}) => {
                   <Video
                     source={{uri: item.content.mediaUrl.url}}
                     style={{width: 100, height: 100}}
-                    // Add controls, resizeMode, etc. as needed
                   />
                 )
               ) : (
@@ -225,7 +252,7 @@ const ChatScreen = ({navigation, route}) => {
               </Text>
             ) : (
               <TextInput
-                value={message.message} // Bind only text messages here
+                value={message.message}
                 onChangeText={text => setMessage({...message, message: text})}
                 placeholder="Type a message..."
                 placeholderTextColor={'#a3a3a3'}
@@ -254,7 +281,7 @@ const ChatScreen = ({navigation, route}) => {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  onPress={selectFile} // Placeholder for media picker
+                  onPress={selectFile}
                   style={{
                     position: 'absolute',
                     right: 12,
@@ -272,7 +299,7 @@ const ChatScreen = ({navigation, route}) => {
           </View>
 
           <TouchableOpacity
-            onPress={fileResponse ? uploadFile : sendMessage} // Upload file or send message
+            onPress={fileResponse ? uploadFile : sendMessage}
             className="ml-2 p-2 rounded-full"
             style={{backgroundColor: '#21c063'}}>
             <MaterialIcons
@@ -280,7 +307,7 @@ const ChatScreen = ({navigation, route}) => {
                 fileResponse ? 'send' : message.message === '' ? 'mic' : 'send'
               }
               size={23}
-              color={'black'}
+              color={'white'}
             />
           </TouchableOpacity>
         </View>
