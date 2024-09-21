@@ -9,6 +9,7 @@ import sendImageAiRoutes from './src/routes/sendImageAiRoutes.js';
 import messageRoutes from './src/routes/messageRoutes.js';
 import friendListRoutes from './src/routes/friendListRoutes.js';
 import mediaUploadRoutes from './src/routes/mediaUploadRoutes.js';
+import fileServicesRoutes from './src/routes/fileServicesRoutes.js'
 import { v2 as cloudinary } from 'cloudinary';
 
 const app = express(); 
@@ -29,6 +30,7 @@ app.use('/api/v1/ai/upload', sendImageAiRoutes);
 app.use('/api/v1/chat', messageRoutes);
 app.use('/api/v1/friend', friendListRoutes);
 app.use('/api/v1/sender' , mediaUploadRoutes);
+app.use('/api/v1/service/file' , fileServicesRoutes);
 
 connectDB();
 

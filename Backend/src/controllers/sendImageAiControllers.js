@@ -18,11 +18,11 @@ export const sendImageAi = async (req, res) => {
         }).catch((error) => {
             return errorResponseHandler(res, 500, 'error', 'Problem uploading ai picture');
         }).finally(() => {
-            fs.unlinkSync(file.path);
+            // fs.unlinkSync(file.path);
         });
         
     } catch (error) {
-        fs.unlinkSync(file.path);
+        // fs.unlinkSync(file.path);
         return errorResponseHandler(res, 500, 'error', 'Problem uploading ai picture');
 }
 }
