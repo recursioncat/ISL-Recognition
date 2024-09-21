@@ -6,7 +6,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 export default function BackButton({ goBack}) {
   return (
     <TouchableOpacity onPress={goBack} style={styles.container}>
-      <MaterialIcons name="arrow-back" color={"white"} size={30} />
+      <MaterialIcons name="arrow-back" color={"white"} size={25} />
     </TouchableOpacity>
   )
 }

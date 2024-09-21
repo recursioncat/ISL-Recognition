@@ -34,41 +34,51 @@ import responseHandler from "../utils/resHandler.js";
 
         const audiopath = file.path;
 
-    }
-    
-    
-    
-    export const imgToText = async (file) => {
+    } 
+
+
+export const imgToText = async (file) => {
+    const client = new vision.ImageAnnotatorClient();
+
+    try {
+        let request;
         
-        const client = new vision.ImageAnnotatorClient();
-        // console.log(file.mimetype);
+        // Check if `file` is a URL (http or https)
+        const isUrl = /^https?:\/\/.+\.(jpg|jpeg|png|bmp|gif)$/.test(file);
 
-        try {
-        
-        const imagePath = file.path;
+        if (isUrl) {
+            // Prepare the request for a remote image (URL)
+            request = {
+                image: {
+                    source: {
+                        imageUri: file
+                    }
+                }
+            };
+        } else {
+            // If it's not a URL, check if the local file exists
+            if (!fs.existsSync(file.path)) {
+                return { error: 'Image file does not exist' };
+            }
 
-        if (!fs.existsSync(imagePath)) {
-
-            return res.status(400).json({ error: 'Image file does not exist' });
-
+            // Prepare the request for a local image file
+            request = {
+                image: {
+                    content: fs.readFileSync(file.path) // Reads the file content as a buffer
+                }
+            };
         }
 
         // Perform OCR using Google Cloud Vision
-        const [result] = await client.textDetection(imagePath);
+        const [result] = await client.textDetection(request);
 
         const detections = result.textAnnotations;
-
         const text = detections[0] ? detections[0].description : '';
-        
-        // console.log(text);
 
-       return {"Image to text success" : text} ;
+        return { "Image to text success": text };
 
     } catch (error) {
-
-        // console.error(error);
-
-        return { error: 'OCR processing failed' }
+        console.error(error);
+        return { error: 'OCR processing failed' };
     }
-    
-}
+};

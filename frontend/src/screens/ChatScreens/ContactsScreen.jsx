@@ -22,7 +22,6 @@ export default function ContactsScreen({navigation}) {
           `${baseUrl}/api/v1/friend/get-friends/${userEmail}`,
         );
         setContacts(response.data.data);
-
         setLoading(false);
       } catch (error) {
         console.error('Error fetching contacts:', error);
@@ -49,6 +48,7 @@ export default function ContactsScreen({navigation}) {
         navigation.navigate('ChatScreen', {
           sender: userEmail,
           recipient: item.email,
+          recipientName : item.userName,
         })
       }
       className="flex-row items-center p-4 border-b border-gray-200">
