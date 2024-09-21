@@ -13,6 +13,7 @@ export default function ChatingNavigator() {
       screenOptions={{
         headerStyle: {backgroundColor: '#0B141B'}, // Set header background color for all screens
         headerTintColor: '#fff', // Set header text/icon color for all screens
+        headerMode: 'screen', // Set the header mode to screen
       }}>
       <Stack.Screen name="ContactsScreen" component={ContactsScreen} />
       <Stack.Screen name="SaveContactScreen" component={SaveContactScreen} />
@@ -21,6 +22,7 @@ export default function ChatingNavigator() {
         component={ChatScreen}
         options={{
           headerShown: true, // Show the header as needed
+          headerMode: 'screen', // Set the header mode to screen
         }}
       />
       <Stack.Screen name="ImageViewer" component={ImageViewer} />
