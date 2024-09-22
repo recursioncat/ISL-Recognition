@@ -5,13 +5,13 @@ import responseHandler from "../utils/resHandler.js";
  import fs from 'fs';
  
  
- export const textTranslate = async (text) => {
+ export const textTranslate = async (text,ln = 'en') => {
 
     try {
 
         let translationOutput;
 
-        await translate(text, { to: 'en' }).then(res => {
+        await translate(text, { to: ln }).then(res => {
 
         translationOutput = res.text;
 

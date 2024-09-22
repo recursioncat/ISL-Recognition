@@ -51,3 +51,21 @@ export const fileServicesController = async (req, res) => {
 
 };
 
+// handel featurs of chat app like text to speech, speech to text, image to text, text translation, isl to text etc.
+
+export const chatServicesController = async (req, res) => {
+    
+    const {userId , message , mediaUrl, selectedService } = req.body;
+
+    if(!userId || (!message && !mediaUrl) || !selectedService) {
+        return errorResponseHandler(res, 400, 'error', 'Please provide all required fields');
+    }
+
+    try {
+        const result = await chatServicesHandler(userId, message, mediaUrl, selectedService);
+        return responseHandler(res, 200, 'success', 'done', result);
+
+    }catch (error) {
+        return errorResponseHandler(res, 400, 'error', error);
+    }
+}
