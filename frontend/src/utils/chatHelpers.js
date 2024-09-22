@@ -3,6 +3,7 @@ import io from 'socket.io-client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { baseUrl } from './index';
 import DocumentPicker from 'react-native-document-picker';
+import { act } from 'react';
 
 const socket = io(baseUrl);
 
@@ -159,7 +160,24 @@ export const sendMessage = async (message, senderId, recipientId, setMessage , s
     clearTimeout(longPressTimer);
   };
 
-  export const handlePanelAction = (action,setActiveItemId) => {
+  export const handlePanelAction = (action,setActiveItemId,senderId,message, mediaUrl) => {
+    if (action === 'close') {
+      setActiveItemId(null); // Reset the active item
+      return;
+    }
+    
+    const messageObject = {
+      userId: senderId,
+      message: message ? message : null,
+      mediaUrl : {
+        url : mediaUrl.url ? mediaUrl.url : null,
+        type : mediaUrl.type === 'image' ? 'image' : mediaUrl.audio ? 'audio' : 'video'
+      },
+      selectedService : action,
+    };
+
+    socket.emit('useService', messageObject);
+    
     console.log('Panel action:', action);
 
     setActiveItemId(null); // Reset the active item
