@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { View, Image, TouchableOpacity, StyleSheet, Text, Animated, StatusBar, TouchableWithoutFeedback, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { BackButton } from '../../components';
+import { AudioPlayer, BackButton } from '../../components';
 import Video from 'react-native-video';
 
 const ImageViewer = ({ route }) => {
-  const { imageUrl, videoUrl, senderName, type } = route.params;
+  const { imageUrl, videoUrl, senderName, type, audio} = route.params;
   const navigation = useNavigation();
 
   const [isBarVisible, setIsBarVisible] = useState(true);
@@ -49,7 +49,10 @@ const ImageViewer = ({ route }) => {
         {/* Conditionally render Image or Video based on type */}
         {type === 'image' ? (
           <Image source={{ uri: imageUrl }} style={styles.image} resizeMode="contain" className="border border-solid rounded-xl" />
-        ) : (
+        ) : 
+        (audio ? (
+          <AudioPlayer audioUri={videoUrl} />
+        ) :
           <TouchableWithoutFeedback onPress={handleVideoPress}>
             <Video
               source={{ uri: videoUrl }}

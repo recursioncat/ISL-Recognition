@@ -37,7 +37,7 @@ const socket = io(baseUrl);
 const ChatScreen = ({navigation, route}) => {
   const [message, setMessage] = useState({
     message: '',
-    mediaUrl: {url: '', type: ''},
+    mediaUrl: {url: '', type: '', audio: false},
   });
   const [chat, setChat] = useState([]);
   const [senderId, setSenderId] = useState('');
@@ -51,7 +51,7 @@ const ChatScreen = ({navigation, route}) => {
   const [activeItemId, setActiveItemId] = useState(null); // State to track the active item
   const [longPressTimer, setLongPressTimer] = useState(null);
   const [isViewerVisible, setIsViewerVisible] = useState(false); // Track ImageViewer visibility
-  const [viewerData, setViewerData] = useState({ imageUrl: '', videoUrl: '', senderName: '', type: '' }); // Data for ImageViewer
+  const [viewerData, setViewerData] = useState({ imageUrl: '', videoUrl: '', senderName: '', type: '' , audio : false}); // Data for ImageViewer
 
   useEffect(() => {
     fetchUserIds(
@@ -135,6 +135,9 @@ const ChatScreen = ({navigation, route}) => {
           message={message}
           setMessage={setMessage}
           fileResponse={fileResponse}
+          setFileResponse={setFileResponse}
+          senderId={senderId}
+          recipientId={recipientId}
           selectFile={() => selectFile(setFileResponse, setMessage)}
           sendMessage={() =>
             sendMessage(

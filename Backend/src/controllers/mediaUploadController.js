@@ -16,12 +16,13 @@ export const mediaUploadController = async (req, res) => {
             );
         }
 
+        // const fileType = file.originalname.split(".")[0];
 
         const result = await cloudinary.uploader.upload(file.path,{
             resource_type: "auto",
             folder: "media",
         });
-       
+        
         if (!result) {
             return errorResponseHandler(
                 res,
@@ -32,10 +33,11 @@ export const mediaUploadController = async (req, res) => {
         }
 
         fs.unlinkSync(file.path);
-
+       
         const finalResult = {
             url: result.url,
             resource_type: result.resource_type,
+            audio : result.is_audio,
         };
 
         return responseHandler(

@@ -134,12 +134,13 @@ export const sendMessage = async (message, senderId, recipientId, setMessage , s
   });
   };
 
-  export const handleImagePress = ({ imageUrl = '', videoUrl = '', senderName, type , navigation }) => {
+  export const handleImagePress = ({ imageUrl = '', videoUrl = '', senderName, type , navigation , audio = false}) => {
     navigation.navigate('ImageViewer', {
       imageUrl: imageUrl || null,  // Pass null if no imageUrl is provided
       videoUrl: videoUrl || null,  // Pass null if no videoUrl is provided
       senderName,
       type,
+      audio 
     });
   };
 

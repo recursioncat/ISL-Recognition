@@ -3,6 +3,7 @@ import { TouchableOpacity, View, Image, Text } from 'react-native';
 import Video from 'react-native-video';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Animated from 'react-native-reanimated';
+import AudioPlayer from './AudioPlayer';
 
 const MessageItem = ({
   item,
@@ -51,6 +52,7 @@ const MessageItem = ({
                   imageUrl: item.content.mediaUrl.url,
                   senderName: recipientName,
                   type: 'image',
+                  audio : item.content.mediaUrl.audio,
                   navigation
                  
                 })
@@ -67,13 +69,17 @@ const MessageItem = ({
                 resizeMode="cover"
               />
             </TouchableOpacity>
-          ) : (
+          ) : item.content.mediaUrl.audio ? (
+            
+              <AudioPlayer audioUri={item.content.mediaUrl.url} />
+          ): (
             <TouchableOpacity
               onPress={() =>
                 handleImagePress({
                   videoUrl: item.content.mediaUrl.url,
                   senderName: recipientName,
                   type: 'video',
+                  audio : item.content.mediaUrl.audio,
                   navigation
                  
                 })

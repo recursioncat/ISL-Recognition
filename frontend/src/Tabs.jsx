@@ -5,6 +5,7 @@ import TranslatorNavigator from './TranslatorNavigator';
 import ChatingNavigator from './ChatingNavigator';
 import ProfileScreen from './screens/ProfileScreen';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
+import FileUploadScreen from './screens/ChatScreens/FileUploadScreen';
 const Tab = createBottomTabNavigator();
 
 function Tabs() {
@@ -43,7 +44,7 @@ function Tabs() {
       />
       <Tab.Screen
         name="Account"
-        component={ProfileScreen}
+        component={FileUploadScreen}
         options={{
           tabBarLabel: 'Account',
           tabBarIcon: ({color, size}) => (
