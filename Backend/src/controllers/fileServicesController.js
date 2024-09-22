@@ -54,20 +54,35 @@ export const fileServicesController = async (req, res) => {
 
 // handel featurs of chat app like text to speech, speech to text, image to text, text translation, isl to text etc.
 
-export const chatServicesController = async (req, res) => {
+export const chatServicesController= (io, users) => async ({userId , message , mediaUrl, selectedService }) => {
     
-    const {userId , message , mediaUrl, selectedService } = req.body;
 
     if(!userId || (!message && !mediaUrl) || !selectedService) {
         return errorResponseHandler(res, 400, 'error', 'Please provide all required fields');
     }
 
     try {
-        const result = await chatServicesHandler(userId, message, mediaUrl, selectedService);
-        return responseHandler(res, 200, 'success', 'done', result);
+        const response = await chatServicesHandler(userId, message, mediaUrl, selectedService);
+
+
+        const serviceResponse = {
+            _id : new Date().getTime(),
+            sender : 'service-0012253966',
+            recipient : userId,
+            content : {
+                message : response.result_type === 'text' ? response.result : '',
+                mediaUrl : {
+                    "url" : response.result_type !== 'text' ? response.result : '',
+                    type : response.result_type,
+                    audio : response.result_type === 'audio' ? true : false
+                },
+            },
+            timestamp : new Date(),
+        }
+        
+        io.to(users.get(userId)).emit("receiveMessage", serviceResponse);
 
     }catch (error) {
-        console.log(error);
-        return errorResponseHandler(res, 400, 'error', error);
+       console.log("Error sending req to the service via Socket.IO:", error);
     }
 }

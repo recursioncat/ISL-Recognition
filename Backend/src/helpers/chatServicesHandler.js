@@ -11,6 +11,8 @@ export async function chatServicesHandler(userId, message, mediaUrl, selectedSer
     }
 
     let result;
+    let result_type;
+
     const textServices = ['textTranslate', 'textToIsl', 'textToSpeech'];
     const imageServices = ['imgToIsl'];
     const audioServices = ['speechToText', 'speechToIsl'];
@@ -25,13 +27,16 @@ export async function chatServicesHandler(userId, message, mediaUrl, selectedSer
         switch (selectedService) {
             case 'textTranslate':
                 result = await textTranslate(message);
+                result_type = 'text';
                 break;
             case 'textToIsl':
                 result = await textToIsl(message);
+                result_type = 'video';
                 console.log('textToIsl service is not available');
                 break;
             case 'textToSpeech':
                 // result = await textToSpeech(message);
+                // result_type = 'audio';
                 console.log('textToSpeech service is not available');
                 break;
         }
@@ -49,6 +54,7 @@ export async function chatServicesHandler(userId, message, mediaUrl, selectedSer
 
                 if (selectedService === 'imgToIsl') {
                     result = await imgToIsl(url);
+                    result_type = 'text';
                     console.log('imgToIsl service is not available');
                 }
                 break;
@@ -60,9 +66,11 @@ export async function chatServicesHandler(userId, message, mediaUrl, selectedSer
 
                 if (selectedService === 'speechToText') {
                     result = await speechToText(url);
+                    result_type = 'text';
 
                 } else if (selectedService === 'speechToIsl') {
                     // result = await speechToIsl(url);
+                    // result_type = 'video';
                     console.log('speechToIsl service is not available');
                 }
                 break;
@@ -74,9 +82,11 @@ export async function chatServicesHandler(userId, message, mediaUrl, selectedSer
 
                 if (selectedService === 'IslVideoToText') {
                     // result = await IslVideoToText(url);
+                    // result_type = 'text';
                     console.log('ISLVideoToText service is not available');
                 } else if (selectedService === 'IslVideoToVoice') {
                     // result = await IslVideoToVoice(url);
+                    // result_type = 'audio';
                     console.log('IslVideoToVoice service is not available');
                 }
                 break;
@@ -86,7 +96,7 @@ export async function chatServicesHandler(userId, message, mediaUrl, selectedSer
         }
     }
 
-    return result;
+    return {result, result_type};
 }
 
 const textToIsl = async (text) => {
