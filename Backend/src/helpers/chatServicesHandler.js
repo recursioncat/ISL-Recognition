@@ -1,6 +1,6 @@
-import { textTranslate, imgToText , speechToText } from "./fileServicesHandler";
+import {textTranslate , speechToText , imgToText} from './fileServicesHandler.js';
 
-export default async function chatServicesHandler({ userId, message, mediaUrl, selectedService }) {
+export async function chatServicesHandler(userId, message, mediaUrl, selectedService) {
     if (!userId || (!message && !mediaUrl?.url) || !selectedService) {
         throw new Error('Please provide all required fields');
     }
@@ -27,7 +27,7 @@ export default async function chatServicesHandler({ userId, message, mediaUrl, s
                 result = await textTranslate(message);
                 break;
             case 'textToIsl':
-                // result = await textToIsl(message);
+                result = await textToIsl(message);
                 console.log('textToIsl service is not available');
                 break;
             case 'textToSpeech':
@@ -48,7 +48,7 @@ export default async function chatServicesHandler({ userId, message, mediaUrl, s
                 }
 
                 if (selectedService === 'imgToIsl') {
-                    // result = await imgToIsl(url);
+                    result = await imgToIsl(url);
                     console.log('imgToIsl service is not available');
                 }
                 break;
@@ -60,6 +60,7 @@ export default async function chatServicesHandler({ userId, message, mediaUrl, s
 
                 if (selectedService === 'speechToText') {
                     result = await speechToText(url);
+
                 } else if (selectedService === 'speechToIsl') {
                     // result = await speechToIsl(url);
                     console.log('speechToIsl service is not available');
@@ -87,3 +88,39 @@ export default async function chatServicesHandler({ userId, message, mediaUrl, s
 
     return result;
 }
+
+const textToIsl = async (text) => {
+    // Implement text to ISL conversion
+    try {
+      const response = await textTranslate(text);
+      // Here, i can add the logic to pass it to the AI model if needed
+      return response; // Return the response from textTranslate or AI model
+    } catch (error) {
+      console.error('Error during text to ISL conversion:', error);
+      throw error;
+    }
+  };
+  
+  const imgToIsl = async (url) => {
+    try {
+      // Step 1: Convert image to text
+      const response = await imgToText(url);
+  
+      // Extract the text from the response
+      const extractedText = response['Image to text success'].replace(/\n/g, ' ');
+      console.log('Extracted Text:', extractedText);
+  
+      // Step 2: Use the textToIsl function to process the extracted text
+      const islResponse = await textToIsl(extractedText);
+      console.log('ISL Response:', islResponse);
+  
+      // Return the final ISL response
+      return islResponse;
+    } catch (error) {
+      console.error('Error during image to ISL conversion:', error);
+      throw error; // Re-throw the error to handle it upstream if needed
+    }
+  };
+
+
+  

@@ -21,7 +21,7 @@ import responseHandler from "../utils/resHandler.js";
         
     });
     
-    return { "Translation success" : translationOutput } ;
+    return translationOutput;
     
     } catch (error) {
         return { error: 'translation failed' }

@@ -1,6 +1,7 @@
 import { textTranslate, speechToText, imgToText } from '../helpers/fileServicesHandler.js'
 import responseHandler from "../utils/resHandler.js";
 import errorResponseHandler from "../utils/errorResponseHandler.js";
+import { chatServicesHandler } from '../helpers/chatServicesHandler.js';
 
 
 export const fileServicesController = async (req, res) => {
@@ -66,6 +67,7 @@ export const chatServicesController = async (req, res) => {
         return responseHandler(res, 200, 'success', 'done', result);
 
     }catch (error) {
+        console.log(error);
         return errorResponseHandler(res, 400, 'error', error);
     }
 }
