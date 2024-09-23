@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from dependencies import *
+from classify import Classifier
 import os
 
 app = Flask(__name__)
@@ -29,7 +30,15 @@ def predictfromurl():
     
     os.remove('image.jpeg')
     return jsonify(class_names[np.argmax(prediction)].lower())
+
+
+@app.route('/classifytext', methods=['GET','POST'])
+def classifyText():
+    classifier = Classifier()
+    data = request.get_json(force=True)
+    sentence = data['sentence']
     
+    return jsonify(classifier.classify(sentence))
     
 
 
