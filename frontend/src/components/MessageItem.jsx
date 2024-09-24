@@ -49,7 +49,7 @@ const MessageItem = ({
         style={{
           backgroundColor: item.sender === senderId ? '#134d37' : '#1f2c34',
         }}>
-        {item.sender === 'service-0012253966' ? (<Text className="text-sm text-gray-500" >Sanket Bot</Text>) : null}
+        {item.sender === 'service-0012253966' ? (<Text className="text-sm text-gray-500" >Sanket AI</Text>) : null}
         
         {item.content.mediaUrl.url !== '' ? (
           item.content.mediaUrl.type === 'image' ? (

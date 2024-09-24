@@ -76,8 +76,8 @@ const MessageInput = ({
     const formData = new FormData();
     formData.append('mediaUpload', {
       uri: filePath,
-      name: 'audio.m4a',  // Make sure to set .m4a here
-      type: 'audio/m4a',         // Correct MIME type
+      name: 'audio.mp3',  // Make sure to set .m4a here
+      type: 'audio/mp3',         // Correct MIME type
       resource_type: 'audio',    // Resource type for cloudinary
     });
 
