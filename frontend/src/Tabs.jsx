@@ -68,7 +68,7 @@ function Tabs() {
       />
       <Tab.Screen
         name="Account"
-        component={FileUploadScreen}
+        component={ProfileScreen}
         options={{
           tabBarLabel: 'Communities',
           tabBarIcon: ({color, size}) => (
