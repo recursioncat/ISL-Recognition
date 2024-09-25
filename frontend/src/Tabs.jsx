@@ -27,7 +27,7 @@ function Tabs() {
       ),
       headerShown: false
     }} />
-    <Tab.Screen name="Account" component={ProfileScreen} options={{
+    <Tab.Screen name="Account" component={LoginScreen} options={{
       tabBarLabel: 'Account',
       tabBarIcon: ({ color, size }) => (
         <MaterialIcons name="account-circle" color={color} size={size} />
