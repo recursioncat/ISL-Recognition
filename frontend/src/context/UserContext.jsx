@@ -17,6 +17,7 @@ export const UserProvider = ({ children }) => {
     const fetchUserEmail = async () => {
       try {
         const token = await AsyncStorage.getItem('token');
+        
         if (!token) {
           setError('User is not logged in');
           setLoading(false);
@@ -26,6 +27,7 @@ export const UserProvider = ({ children }) => {
         const response = await axios.get(`${baseUrl}/api/v1/user/getuser`, {
           headers: { 'x-auth-token': token },
         });
+        
         setUserEmail(response.data.data.email);
       } catch (err) {
         console.error('Error fetching user email:', err);

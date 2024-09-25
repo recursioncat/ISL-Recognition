@@ -11,11 +11,15 @@ const messageSchema = new mongoose.Schema({
         ref: "User",
         required: true,
     },
-    content: { type: String, required: true },
+    content: {
+        message : { type: String},
+        mediaUrl : { url : { type: String}, type : { type: String} , audio : { type: Boolean}}
+        
+    },
     timestamp: { type: Date, default: Date.now },
     status: { type: String, default: "sent" }, // You can add 'delivered', 'read' as needed
 });
 
-const Message = mongoose.model("Message", messageSchema);
+const Message =  mongoose.models.Message || mongoose.model("Message", messageSchema);
 
 export default Message;

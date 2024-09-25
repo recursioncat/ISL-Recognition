@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import responseHandler from "../utils/resHandler.js";
 import errorResponseHandler from "../utils/errorResponseHandler.js";
 import fs from "fs";
+import { captureRejectionSymbol } from 'events';
 
 export const getUser = async (req, res) => {
 
@@ -100,3 +101,30 @@ export const uploadProfilePicture = async (req, res) => {
         return errorResponseHandler(res, 500, 'error', 'Problem uploading profile picture');
 }
 }
+
+
+export const getProfilePicture = async (req, res) => {
+
+    try{
+        if(!req.params.id) {
+            return errorResponseHandler(res, 400, "error", "Please provide user ID");
+        }
+
+        const user = await User.findById(req.params.id);
+
+    if(!user) {
+        return errorResponseHandler(res, 400, "error", "User does not exist");
+    }
+
+    if(!user.profilePicture) {
+        return errorResponseHandler(res, 400, "error", "User has no profile picture");
+    }
+
+    return responseHandler(res, 200, "success", "Profile picture fetched successfully", user.profilePicture);
+    }
+    catch(error) {
+        return errorResponseHandler(res, 500, "error", "Problem fetching profile picture");
+    }
+}
+
+    

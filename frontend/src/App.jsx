@@ -17,7 +17,7 @@ function App() {
       <Provider theme={theme}>
         <NavigationContainer>
           <Stack.Navigator
-            initialRouteName="SplashScreen"
+            initialRouteName="IntroNavigator"
             screenOptions={{headerShown: false}}>
             <Stack.Screen name="IntroNavigator" component={IntroNavigator} />
             <Stack.Screen name="AuthNavigator" component={AuthNavigator} />
