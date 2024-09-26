@@ -88,7 +88,7 @@ export default function ResetPasswordScreen({ navigation }) {
       <View className="flex-row mb-2 " >
         <Text className="text-slate-50 text-3xl font-semibold ">Restore </Text>
         <Text style={styles.yellowText} className="text-3xl font-semibold">Password</Text>
-        </View>
+      </View>
       {/* </Header> */}
       <ResetPassTextInput
         label="E-mail address"
