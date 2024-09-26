@@ -223,6 +223,6 @@ import  {
   
     const result = await chatSession.sendMessage(inputText);
     console.log(result.response.text());
-    return result;
+    return result.response.text();
   }
 

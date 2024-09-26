@@ -1,4 +1,4 @@
-import {textTranslate , speechToText , imgToText} from './fileServicesHandler.js';
+import {textTranslate , speechToText as sTt , imgToText} from './fileServicesHandler.js';
 import { sequenceGen } from './aiSequenceHandler.js';
 
 export async function chatServicesHandler(userId, message, mediaUrl, selectedService) {
@@ -32,7 +32,7 @@ export async function chatServicesHandler(userId, message, mediaUrl, selectedSer
                 break;
             case 'textToIsl':
                 result = await textToIsl(message);
-                result_type = 'video';
+                result_type = 'text'; // Change to 'video' if textToIsl returns video
                 console.log('textToIsl service is not available');
                 break;
             case 'textToSpeech':
@@ -70,8 +70,8 @@ export async function chatServicesHandler(userId, message, mediaUrl, selectedSer
                     result_type = 'text';
 
                 } else if (selectedService === 'speechToIsl') {
-                    // result = await speechToIsl(url);
-                    // result_type = 'video';
+                    result = await speechToIsl(url);
+                    result_type = 'text'; // Change to 'video' if speechToIsl returns video
                     console.log('speechToIsl service is not available');
                 }
                 break;
@@ -135,7 +135,36 @@ const imgToIsl = async (url) => {
     }
   };
 
-const speechToText = async (url) => {
+const speechToText = async (url,ln='en') => {
+    try {
+      const response = await sTt({url});
+        // Translate the text to the desired language
+        if ( ln || ln !== 'en') {
+          const translatedText = await textTranslate(response, ln);
+          console.log('Translated Text:', translatedText);
+          return translatedText;
+        }
 
-}
+      return response;
+    } catch (error) {
+      console.error('Error during speech to text conversion:', error);
+      throw error;
+    }
+  }
+
+const speechToIsl = async (url) => {
+    try {
+      // Step 1: Convert speech to text
+      const response = await speechToText(url);
+  
+      // Step 2: Use the textToIsl function to process the extracted text
+      const islResponse = await textToIsl(response);
+  
+      // Return the final ISL response
+      return islResponse;
+    } catch (error) {
+      console.error('Error during speech to ISL conversion:', error);
+      throw error;
+    }
+  }
   
