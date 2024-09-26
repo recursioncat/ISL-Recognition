@@ -14,7 +14,6 @@ import  fs from "fs";
  
 
  
- 
  export const textTranslate = async (text,ln = 'en') => {
 
     try {
@@ -166,9 +165,7 @@ import  fs from "fs";
   // Execute the transcription process
   return await quickstart();
 };
-      
-
-
+ 
  export const imgToText = async (file) => {
     const client = new vision.ImageAnnotatorClient();
     console.log("image")
@@ -218,15 +215,12 @@ import  fs from "fs";
     }
 };
 
+const client = new ElevenLabsClient({
+  apiKey: ELEVENLABS_API_KEY,
+});
 
-export const textToSpeech = async () => {
+export const textToSpeech = async (text) => {
 
-
-  const client = new ElevenLabsClient({
-    apiKey: ELEVENLABS_API_KEY,
-  });
-  
-  const createAudioFileFromText = async (text) => {
     return new Promise(async (resolve, reject) => {
       try {
         const audio = await client.generate({
@@ -239,14 +233,13 @@ export const textToSpeech = async () => {
   
         audio.pipe(fileStream);
         fileStream.on("finish", () => resolve(fileName)); // Resolve with the fileName
+        console.log("file name", fileName);
         fileStream.on("error", reject);
       } catch (error) {
         console.log(error);
         reject(error);
       }
-    });
-  };
 
-  const response = await createAudioFileFromText("Hello World");
-  return {"tet-speech success": response}
+    });
+
 }
