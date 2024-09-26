@@ -14,6 +14,7 @@ import  fs from "fs";
  
 
  
+ 
  export const textTranslate = async (text,ln = 'en') => {
 
     try {
@@ -116,7 +117,9 @@ import  fs from "fs";
   // Execute the transcription process
   return await quickstart();
 };
- 
+      
+
+
  export const imgToText = async (file) => {
     const client = new vision.ImageAnnotatorClient();
     console.log("image")
@@ -166,11 +169,7 @@ import  fs from "fs";
     }
 };
 
-const client = new ElevenLabsClient({
-  apiKey: ELEVENLABS_API_KEY,
-});
 
-<<<<<<< HEAD
 // export const textToSpeech = async () => {
 
 
@@ -202,29 +201,3 @@ const client = new ElevenLabsClient({
 //   const response = await createAudioFileFromText("Hello World");
 //   return {"tet-speech success": response}
 // }
-=======
-export const textToSpeech = async (text) => {
-
-    return new Promise(async (resolve, reject) => {
-      try {
-        const audio = await client.generate({
-          voice: "Rachel",
-          model_id: "eleven_turbo_v2_5",
-          text,
-        });
-        const fileName = `${uuid()}.mp3`;
-        const fileStream = createWriteStream(fileName);
-  
-        audio.pipe(fileStream);
-        fileStream.on("finish", () => resolve(fileName)); // Resolve with the fileName
-        console.log("file name", fileName);
-        fileStream.on("error", reject);
-      } catch (error) {
-        console.log(error);
-        reject(error);
-      }
-
-    });
-
-}
->>>>>>> 011cce821d90df84a97ad02dc7a13a66b02a4a38
