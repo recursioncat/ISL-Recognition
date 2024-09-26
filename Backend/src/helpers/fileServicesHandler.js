@@ -15,14 +15,13 @@ import  fs from "fs";
 
  
  
- export const textTranslate = async (text) => {
-  console.log("text")
+ export const textTranslate = async (text,ln = 'en') => {
 
     try {
 
         let translationOutput;
 
-        await translate(text, { to: 'en' }).then(res => {
+        await translate(text, { to: ln }).then(res => {
 
         translationOutput = res.text;
 
@@ -32,7 +31,7 @@ import  fs from "fs";
         
     });
     
-    return { "Translation success" : translationOutput } ;
+    return translationOutput;
     
     } catch (error) {
         return { error: 'translation failed' }

@@ -13,7 +13,8 @@ const messageSchema = new mongoose.Schema({
     },
     content: {
         message : { type: String},
-        mediaUrl : { url : { type: String}, type : { type: String}}
+        mediaUrl : { url : { type: String}, type : { type: String} , audio : { type: Boolean}}
+        
     },
     timestamp: { type: Date, default: Date.now },
     status: { type: String, default: "sent" }, // You can add 'delivered', 'read' as needed

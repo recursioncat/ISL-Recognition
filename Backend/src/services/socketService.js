@@ -1,3 +1,4 @@
+import { chatServicesController } from '../controllers/fileServicesController.js';
 import { sendMessages } from '../helpers/socketChatHandler.js';
 
 export default (io) => {
@@ -14,7 +15,8 @@ export default (io) => {
 
         // Handle sending a new message
         socket.on('sendMessage', sendMessages(io, users)); // Pass io and users map
-
+        socket.on('useService', chatServicesController(io, users));
+        
         // Clean up when a user disconnects
         socket.on('disconnect', () => {
             users.forEach((socketId, userId) => {

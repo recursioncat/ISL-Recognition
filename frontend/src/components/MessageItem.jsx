@@ -1,9 +1,10 @@
 import React from 'react';
-import { TouchableOpacity, View, Image, Text } from 'react-native';
+import {TouchableOpacity, View, Image, Text, ScrollView} from 'react-native';
 import Video from 'react-native-video';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Animated from 'react-native-reanimated';
-
+import AudioPlayer from './AudioPlayer';
+import {serviceActions} from '../utils';
 const MessageItem = ({
   item,
   senderId,
@@ -25,10 +26,15 @@ const MessageItem = ({
   setIsViewerVisible, // Add
   setViewerData, // Add
 }) => (
-  
-    <TouchableOpacity
+  <TouchableOpacity
     onPressIn={event => {
-      handleLongPressStart(event, item , setPanelPosition , setActiveItemId , setLongPressTimer);
+      handleLongPressStart(
+        event,
+        item,
+        setPanelPosition,
+        setActiveItemId,
+        setLongPressTimer,
+      );
       // setActiveItemId(item._id);
     }}
     onPressOut={() => {
@@ -43,6 +49,8 @@ const MessageItem = ({
         style={{
           backgroundColor: item.sender === senderId ? '#134d37' : '#1f2c34',
         }}>
+        {item.sender === 'service-0012253966' ? (<Text className="text-sm text-gray-500" >Sanket AI</Text>) : null}
+        
         {item.content.mediaUrl.url !== '' ? (
           item.content.mediaUrl.type === 'image' ? (
             <TouchableOpacity
@@ -51,8 +59,8 @@ const MessageItem = ({
                   imageUrl: item.content.mediaUrl.url,
                   senderName: recipientName,
                   type: 'image',
-                  navigation
-                 
+                  audio: item.content.mediaUrl.audio,
+                  navigation,
                 })
               }
               style={{alignSelf: 'center'}}
@@ -67,6 +75,8 @@ const MessageItem = ({
                 resizeMode="cover"
               />
             </TouchableOpacity>
+          ) : item.content.mediaUrl.audio ? (
+            <AudioPlayer audioUri={item.content.mediaUrl.url} />
           ) : (
             <TouchableOpacity
               onPress={() =>
@@ -74,8 +84,8 @@ const MessageItem = ({
                   videoUrl: item.content.mediaUrl.url,
                   senderName: recipientName,
                   type: 'video',
-                  navigation
-                 
+                  audio: item.content.mediaUrl.audio,
+                  navigation,
                 })
               }
               style={{alignSelf: 'center'}}
@@ -114,26 +124,44 @@ const MessageItem = ({
         </Text>
         {activeItemId === item._id ? (
           <Animated.View
-            className="flex-row bg-slate-200 p-3 justify-around w-2/4 border-solid rounded-3xl"
+            className="absolute top-10 right-10 z-50 p-3 rounded-3xl border border-slate-300"
             style={{
-              flex: 1,
-              position: 'absolute',
-              top: 40,
-              right: 40,
-              zIndex: 1, // Add a high zIndex value to ensure it stays on top
+              width: '80%', // Increased width for better display
+              backgroundColor: '#12191f',
+              shadowColor: '#fff',
+              shadowOffset: {width: 0, height: 2},
+              shadowOpacity: 0.3,
+              shadowRadius: 4,
+              elevation: 5, // Adds shadow for Android
             }}>
-            <TouchableOpacity onPress={() => handlePanelAction('edit',setActiveItemId)}>
-              <MaterialIcons name="edit" size={24} color="black" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handlePanelAction('delete',setActiveItemId)}>
-              <MaterialIcons name="delete" size={24} color="black" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handlePanelAction('reply',setActiveItemId)}>
-              <MaterialIcons name="reply" size={24} color="black" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => handlePanelAction('close',setActiveItemId)}>
-              <MaterialIcons name="close" size={24} color="black" />
-            </TouchableOpacity>
+            <ScrollView
+              horizontal={true}
+              showsHorizontalScrollIndicator={false} // Hides the scroll bar for a cleaner look
+              contentContainerStyle={{alignItems: 'center'}} // Centers the icons vertically
+            >
+              {serviceActions.map(({action, icon}) => (
+                <TouchableOpacity
+                  onPress={() =>
+                    handlePanelAction(
+                      action,
+                      setActiveItemId,
+                      senderId,
+                      item.content.message,
+                      item.content.mediaUrl,
+                    )
+                  }
+                  key={action}
+                  style={{
+                    marginHorizontal: 10, // Adds spacing between icons
+                    padding: 5, // Adds padding around the icon for better touchability
+                    borderRadius: 50, // Circular background
+                    backgroundColor: '#fff', // White background for the icons
+                    elevation: 3, // Adds shadow for touch effect
+                  }}>
+                  <MaterialIcons name={icon} size={24} color="black" />
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
           </Animated.View>
         ) : null}
       </View>

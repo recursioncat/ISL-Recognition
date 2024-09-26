@@ -10,3 +10,4 @@ export {default as LoginIcons} from './LoginIcons';
 export {default as OptionsMenu} from './OptionsMenu';
 export {default as SaveContactIcon} from './SaveContactIcon';
 export {dafault as Paragraph} from './Paragraph';
+export {default as AudioPlayer} from './AudioPlayer';

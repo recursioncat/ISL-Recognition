@@ -1,0 +1,30 @@
+Input Text Processing and Animation Sequence Generation
+This process outlines how to generate animation sequences based on input text, using a predefined dataset of sentences, words, letters, and numbers.
+1. Preprocessing:
+    Correct grammar and spelling mistakes in the input text.
+    Rearrange words if necessary to ensure sentences are meaningful and coherent.
+2. Sentence-Level Matching:
+    Split the input text into individual sentences based on punctuation.
+    For each sentence:
+        Attempt an exact match against the sentence dataset. If found, return the associated animation sequence identifier.
+        no exact match, attempt partial sentence matching, looking for the longest matching subsequence within the dataset.
+3. Word-Level Matching:
+    If no sentence-level match (full or partial) is found, split the sentence into individual words.
+    For each word:
+        Attempt an exact match against the word dataset. If found, return the associated animation sequence identifier.
+        If a word is not matched, check for similar words in the dataset to create semantically close animation, this should happen if possible and generate good coherent animations.
+4. Character/Digit Decomposition (Last Resort):
+    If a word is not found in the word dataset:
+        If the word is a name (e.g., "Biswajit") or a recognizable entity:
+            Attempt to use a similar word based on available animation in the dataset.
+            If unable to use an available animation, decompose it into individual letters and return the animation identifiers from the letters dataset.
+        If the word is a number: decompose it into individual digits and return animation sequence from the numbers dataset.
+    Ignore articles (e.g., "a," "the") and conjunctions (e.g., "and," "but") unless essential for maintaining the coherence or meaning of a generated animation sequence.
+5. Animation Sequence Construction:
+    Combine all retrieved animation identifiers (from sentences, words, letters, and digits) into a single, ordered list. Maintain the original input order.
+    Prioritize sentence-level matches, then partial sentences, then words and finally, character/digit level animations. The goal is to utilize the longest matching sequence to make the animation most coherent and intuitive.
+6. Similarity Matching (Enhancement):
+    If no exact or partial matches are found at the sentence or word level, implement a similarity check (using a suitable metric) to identify sentences or words in the dataset that are semantically close to the input. Use the animation sequence of the closest match if a sufficient degree of similarity is found. This will ensure the output generates animations are as close as possible to the given text meaning and also maintain animation flow by combining smaller sequences and letter to produce an overall sequence that properly aligns with the original sentence. However care should be taken to use such approach if a sufficiently close enough match exists or if using such partially matched sequences enhances meaning of the input over completely generating animations based on individual characters and the dataset provides semantically close animation.
+7. Output:
+    Return the final ordered list of animation identifiers. This list represents the animation sequence that corresponds to the input text.
+This refined instruction set explicitly emphasizes the matching priority (sentences > partial sentences>words > letters/digits), clarifies the handling of names and numbers, introduces the concept of similarity matching, and underscores the importance of generating a coherent and understandable final animation sequence. It also better accounts for partial sentences matches over completely going for words approach for partial parts. It also emphasizes to consider ignoring articles/conjunctions unless those enhances meaning when generating animation.

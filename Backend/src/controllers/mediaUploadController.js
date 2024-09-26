@@ -15,13 +15,13 @@ export const mediaUploadController = async (req, res) => {
                 "Please upload an image"
             );
         }
-
-
-        const result = await cloudinary.uploader.upload(file.path,{
-            resource_type: "auto",
-            folder: "media",
-        });
-       
+        
+          const result = await cloudinary.uploader.upload(file.path,{
+                resource_type: "auto",
+                folder: "media",
+            });
+           
+        
         if (!result) {
             return errorResponseHandler(
                 res,
@@ -32,10 +32,11 @@ export const mediaUploadController = async (req, res) => {
         }
 
         fs.unlinkSync(file.path);
-
+       
         const finalResult = {
             url: result.url,
             resource_type: result.resource_type,
+            audio : result.is_audio,
         };
 
         return responseHandler(
@@ -52,7 +53,7 @@ export const mediaUploadController = async (req, res) => {
             res,
             500,
             "error",
-            "Problem uploading profile picture"
+            "Problem uploading media files"
         );
     }
 };
