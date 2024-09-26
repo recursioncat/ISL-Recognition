@@ -12,6 +12,7 @@ import mediaUploadRoutes from './src/routes/mediaUploadRoutes.js';
 import fileServicesRoutes from './src/routes/fileServicesRoutes.js'
 import aiSequenceRoutes from './src/routes/aiSequenceRoutes.js';
 import { v2 as cloudinary } from 'cloudinary';
+import { createAudioFileFromText } from './src/services/testServices.js';
 
 const app = express(); 
 
@@ -42,7 +43,9 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-app.get('/', (req, res) => { 
+app.get('/', async(req, res) => {
+    const response = await createAudioFileFromText("Hello World"); 
+    console.log(response);
     res.send('Hello World!'); 
 });
 
