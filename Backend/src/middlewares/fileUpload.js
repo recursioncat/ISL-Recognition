@@ -21,17 +21,20 @@ const storage = multer.diskStorage({
 
 const fileFilter = (req, file, cb) => {
     // Define allowed MIME types and extensions
+    console.log(`Received file: ${file.originalname}`);
+    console.log(`MIME type: ${file.mimetype}`);
     const mimeTypes = {
         'image/jpeg': '.jpeg',
         'image/jpg': '.jpg',
         'image/png': '.png',
-        'audio/mpeg': '.mp3',
         'audio/mp3': '.mp3',
+        'audio/mpeg': '.mp3',
         'audio/wav': '.wav',
+        'audio/m4a': '.m4a',  
         'video/mp4': '.mp4',
         'video/mkv': '.mkv',
-
     };
+    
     if (mimeTypes[file.mimetype]){
         const ext = path.extname(file.originalname).toLowerCase();
         if (ext === mimeTypes[file.mimetype]) {
