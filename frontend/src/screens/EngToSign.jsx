@@ -89,7 +89,7 @@ const EngToSign = ({ navigation }) => {
 
           {/* Swap Button */}
           <View className="absolute bottom-5 right-2">
-            <MaterialIcons name="swap-vert" size={50} color={"white"} className="ml-2" onPress={() => navigation.replace("SignToText")} />
+            <MaterialIcons name="swap-vert" size={50} color={"white"} className="ml-2" onPress={() => navigation.navigate("SignToText")} />
           </View>
         </View>
         
