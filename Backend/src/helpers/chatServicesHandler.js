@@ -135,7 +135,7 @@ const imgToIsl = async (url) => {
     }
   };
 
-const speechToText = async (url) => {
+// const speechToText = async (url) => {
 
-}
+// }
   
