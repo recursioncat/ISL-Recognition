@@ -12,8 +12,10 @@ export const fileServicesController = async (req, res) => {
     let result;
     
     //for URLs
-    // result = await speechToText(req.body); 
-    // return responseHandler(res, 200, 'success', 'done', result);
+    if(req.body.imgUrl) {
+        result = await imgToText(req.body.imgUrl);
+        return responseHandler(res, 200, 'success', 'done', result);
+    }
 
     if(!file && !req.body.text) { //{ reminder biswajit: send text as json {text:data} }
 

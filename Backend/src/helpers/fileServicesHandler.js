@@ -40,84 +40,73 @@ import  fs from "fs";
     }
     
     
- export const speechToText = async (file) => {
-      
-      
+    export const speechToText = async (file) => {
       const client = new speech.SpeechClient();
-      
+      console.log(file);
       let input = file.path || file.url;
       console.log("Processing audio:", input);
       
       async function quickstart() {
         let audio = {};
         let config = {
-          encoding: 'MP3', // Default encoding, will be updated based on file type
-          sampleRateHertz: 16000, // Default sample rate, adjust if necessary
+          encoding: 'MP3', // Adjust based on your audio file
+          sampleRateHertz: 16000,
           languageCode: 'en-US',
         };
-
-        const deleteFile = async () => { if (file.path) { await fs.promises.unlink(file.path); } }
-        
-    try {
-      if (input.startsWith('http://') || input.startsWith('https://')) {
-
-        input = `${input.slice(0, input.length-1)}${3}`;
-        const response = await axios.get(input, { responseType: 'arraybuffer' });
-        
-        const contentType = response.headers['content-type'];
-        console.log(`Downloaded file content type: ${contentType}`);
-        
-        const audioContent = Buffer.from(response.data, 'binary').toString('base64');
-
-        audio = { content: audioContent };
     
-      } else {
-        const audioContent = await fs.promises.readFile(input);
-        const ext = path.extname(input).toLowerCase();
-        console.log(`Local file extension: ${ext}`);
-
-        audio = { content: audioContent.toString('base64') };
-      }
-
-      const request = {
-        audio: audio,
-        config: config
-      };
-
-      // Detects speech in the audio file
-      console.log('Sending request to Google Speech-to-Text API...');
-      const [response] = await client.recognize(request);
-      if (!response.results || response.results.length === 0) {
-        return 'No transcription available.';
-      }
-
-      const transcription = response.results
-        .map(result => result.alternatives[0].transcript)
-        // .join('\n');
-      console.log(`Transcription: ${transcription}`);
-      deleteFile();
-      
-      
-      return transcription;
-    } catch (error) {
-      
-      if (file.path) {
+        const deleteFile = async () => {
+          if (file.path) {
+            await fs.promises.unlink(file.path);
+            console.log(`Deleted local file: ${file.path}`);
+          }
+        };
+    
         try {
-          deleteFile();
-          console.log(`Deleted local file: ${file.path}`);
-        } catch (deleteError) {
-          console.error('Error deleting the file:', deleteError);
+          if (input.startsWith('http://') || input.startsWith('https://')) {
+            input = `${input.slice(0, input.length - 1)}${3}`;
+            const response = await axios.get(input, { responseType: 'arraybuffer' });
+            const contentType = response.headers['content-type'];
+            console.log(`Downloaded file content type: ${contentType}`);
+            
+            const audioContent = Buffer.from(response.data, 'binary').toString('base64');
+            audio = { content: audioContent };
+          } else {
+            const audioContent = await fs.promises.readFile(input);
+            const ext = path.extname(input).toLowerCase();
+            console.log(`Local file extension: ${ext}`);
+            audio = { content: audioContent.toString('base64') };
+            console.log(`Local file size: ${audioContent.length} bytes`);
+          }
+    
+          const request = {
+            audio: audio,
+            config: config,
+          };
+    
+          console.log('Sending request to Google Speech-to-Text API...');
+          const response = await client.recognize(request);
+          console.log(response);
+          if (!response[0].results || response[0].results.length === 0) {
+            return 'No transcription available.';
+          }
+    
+          const transcription = response[0].results
+            .map(result => result.alternatives[0].transcript)
+            .join('\n'); // Uncomment this if you want a single string
+    
+          await deleteFile();
+          // console.log(`Transcription: ${transcription}`);
+          return transcription;
+        } catch (error) {
+          await deleteFile();
+          console.error('Error during transcription:', error);
+          throw error;
         }
       }
-      console.error('Error during transcription:', error);
-      throw error;
-    }
-  }
-
-  // Execute the transcription process
-  return await quickstart();
-};
-      
+    
+      return await quickstart();
+    };
+    
 
 
  export const imgToText = async (file) => {

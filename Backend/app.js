@@ -12,7 +12,7 @@ import mediaUploadRoutes from './src/routes/mediaUploadRoutes.js';
 import fileServicesRoutes from './src/routes/fileServicesRoutes.js'
 import aiSequenceRoutes from './src/routes/aiSequenceRoutes.js';
 import { v2 as cloudinary } from 'cloudinary';
-import { createAudioFileFromText } from './src/services/testServices.js';
+import { speechToText } from './src/helpers/fileServicesHandler.js';
 
 const app = express(); 
 
@@ -44,7 +44,7 @@ cloudinary.config({
 });
 
 app.get('/', async(req, res) => {
-    const response = await createAudioFileFromText("Hello World"); 
+    const response = await speechToText({path:'C:\\Users\\Biswajit Dey\\Desktop\\ISL-Recognition\\uploads\\audios\\biswajittestaudio.mp3'}); 
     console.log(response);
     res.send('Hello World!'); 
 });
