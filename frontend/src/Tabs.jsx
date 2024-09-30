@@ -6,6 +6,7 @@ import ChatingNavigator from './ChatingNavigator';
 import ProfileScreen from './screens/ProfileScreen';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 import FileUploadScreen from './screens/ChatScreens/FileUploadScreen';
+import { IncomingCallScreen , OutgoingCallScreen , WebrtcRoomScreen } from './screens';
 import {View, Text} from 'react-native';
 
 const Tab = createBottomTabNavigator();

@@ -16,9 +16,10 @@ export const setHeaderLeft = (navigation, profilePicture) => {
   );
 };
 
-export const setHeaderRight = () => {
+
+export const setHeaderRight = (otherUserId, recipientId, processCall, processAccept) => {
   return (
-    <TouchableOpacity className="mr-5">
+    <TouchableOpacity className="mr-5" onPress={() => {otherUserId.current = recipientId , processCall()}}>
       <MaterialIcons name="videocam" size={30} color="white" />
     </TouchableOpacity>
   );

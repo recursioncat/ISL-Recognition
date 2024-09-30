@@ -1,6 +1,6 @@
 import React,{useEffect} from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import {ContactsScreen, ChatScreen, SaveContactScreen, ImageViewer} from './screens/index';
+import {ContactsScreen, ChatScreen, SaveContactScreen, ImageViewer , VideoCallScreen} from './screens/index';
 
 
 const Stack = createStackNavigator();
@@ -26,6 +26,10 @@ export default function ChatingNavigator() {
           tabBarStyle: { display: 'none' },
         }}
       />
+      <Stack.Screen name="VideoCallScreen" component={VideoCallScreen} options={{
+        headerShown: false,
+        tabBarStyle: { display: 'none' }
+      }} />
       <Stack.Screen name="ImageViewer" component={ImageViewer} options={{
           tabBarStyle: { display: 'none' },
         }} />
