@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Image, TouchableOpacity, StatusBar } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-const OutgoingCallScreen = ({ calleeName, profilePicture , processEnd }) => {
+const OutgoingCallScreen = ({ calleeName, profilePicture , processEnd}) => {
   return (
       <View style={styles.container}>
     <StatusBar backgroundColor="#111" barStyle="light-content" />
@@ -17,7 +17,7 @@ const OutgoingCallScreen = ({ calleeName, profilePicture , processEnd }) => {
       />
 
       {/* End Call Action */}
-      <TouchableOpacity style={styles.endCallButton} onPress={()=> processEnd()} >
+      <TouchableOpacity style={styles.endCallButton} onPress={processEnd} >
         <MaterialIcons name="call-end" size={30} color="white" />
       </TouchableOpacity>
     </View>

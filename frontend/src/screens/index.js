@@ -15,5 +15,4 @@ export {default as IntroScreen} from './IntroScreens/IntroScreen';
 export {default as ImageViewer} from './ChatScreens/ImageViewer';
 export {default as IncomingCallScreen} from './VideoCallScreens/IncomingCallScreen';
 export {default as OutgoingCallScreen} from './VideoCallScreens/OutgoingCallScreen';
-export {default as VideoCallScreen} from './VideoCallScreens/VideoCallScreen';
 export {default as WebrtcRoomScreen} from './VideoCallScreens/WebrtcRoomScreen';

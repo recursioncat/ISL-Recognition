@@ -11,7 +11,8 @@ import {
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 
-const WebrtcRoomScreen = ({localStream, remoteStream, peerConnection, setlocalStream, setType}) => {
+const WebrtcRoomScreen = ({localStream, remoteStream, peerConnection, setlocalStream, setRemoteStream, setType}) => {
+
     // Handling Mic status
      const [localMicOn, setlocalMicOn] = useState(true);
 
@@ -45,6 +46,7 @@ const WebrtcRoomScreen = ({localStream, remoteStream, peerConnection, setlocalSt
       function leave() {
         peerConnection.current.close();
         setlocalStream(null);
+        setRemoteStream(null);
         setType("CHAT"); // change it and insted of this we can navigate to the chat screen
       }
 
@@ -90,7 +92,7 @@ const WebrtcRoomScreen = ({localStream, remoteStream, peerConnection, setlocalSt
             style={{ flex: 1, backgroundColor: "#050A0E" }}
             streamURL={localStream.toURL()}
           />
-        ) : null}
+        ) : null}    
         {remoteStream ? (
           <RTCView
             objectFit={"cover"}

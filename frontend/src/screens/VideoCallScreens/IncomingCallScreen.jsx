@@ -18,11 +18,11 @@ const IncomingCallScreen = ({ callerName, profilePicture , processAccept , proce
 
       {/* Call Actions */}
       <View style={styles.actionsContainer}>
-        <TouchableOpacity style={styles.declineButton} onPress={()=> processEnd()}>
+        <TouchableOpacity style={styles.declineButton} onPress={processEnd}>
           <MaterialIcons name="call-end" size={30} color="white" />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.acceptButton} onPress={()=> processAccept()}>
+        <TouchableOpacity style={styles.acceptButton} onPress={processAccept}>
           <MaterialIcons name="call" size={30} color="white" />
         </TouchableOpacity>
       </View>
