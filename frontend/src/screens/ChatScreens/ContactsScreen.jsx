@@ -80,8 +80,8 @@ export default function ContactsScreen({navigation}) {
   return (
   
     <View className="flex-1" style={{backgroundColor: '#0B141B'}}>
-      <StatusBar backgroundColor="#0B141B" barStyle="light-content" />
       <Header title="SanketChat" icon="more-vert" />
+      {/* <StatusBar backgroundColor="#0B141B" barStyle="light-content" /> */}
 
       {/* Search input */}
       <View className="items-center w-full px-3">

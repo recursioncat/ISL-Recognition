@@ -4,10 +4,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import TranslatorNavigator from './TranslatorNavigator';
 import ChatingNavigator from './ChatingNavigator';
 import ProfileScreen from './screens/ProfileScreen';
-import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
-import FileUploadScreen from './screens/ChatScreens/FileUploadScreen';
-import { IncomingCallScreen , OutgoingCallScreen , WebrtcRoomScreen } from './screens';
-import {View, Text} from 'react-native';
+
 
 const Tab = createBottomTabNavigator();
 
@@ -24,7 +21,7 @@ function Tabs() {
           fontSize: 12, // Adjust font size if needed
           marginBottom: 8, // Add some margin for the labels
         },
-        tabBarActiveTintColor: '#00FF5F', // Active icon color (greenish)
+        tabBarActiveTintColor: '#f59e0b', // Active icon color (greenish)
         tabBarInactiveTintColor: '#FFFFFF', // Inactive icon color (white)
       }}>
       <Tab.Screen
@@ -33,24 +30,24 @@ function Tabs() {
         options={{
           tabBarLabel: 'Chats',
           tabBarIcon: ({color, size}) => (
-            <View>
+            // <View>
               <MaterialIcons name="translate" color={color} size={size} />
-              {/* Add badge for new message notification */}
-              <View
-                style={{
-                  position: 'absolute',
-                  right: -6,
-                  top: -3,
-                  backgroundColor: 'green',
-                  borderRadius: 10,
-                  width: 16,
-                  height: 16,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                <Text style={{color: 'white', fontSize: 10}}>1</Text>
-              </View>
-            </View>
+              // Add badge for new message notification 
+              // <View
+                // style={{
+                //   position: 'absolute',
+                //   right: -6,
+                //   top: -3,
+                //   backgroundColor: 'green',
+                //   borderRadius: 10,
+                //   width: 16,
+                //   height: 16,
+                //   justifyContent: 'center',
+                //   alignItems: 'center',
+                // }}>
+                // <Text style={{color: 'white', fontSize: 10}}>1</Text>
+              // </View> 
+            // </View>
           ),
           headerShown: false,
         }}

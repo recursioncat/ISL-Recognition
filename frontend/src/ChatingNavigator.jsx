@@ -16,7 +16,7 @@ export default function ChatingNavigator() {
         headerMode: 'screen', // Set the header mode to screen
       }}>
       <Stack.Screen name="ContactsScreen" component={ContactsScreen} options={{headerShown : false}} />
-      <Stack.Screen name="SaveContactScreen" component={SaveContactScreen} />
+      <Stack.Screen name="SaveContactScreen" component={SaveContactScreen}  options={{headerShown : false}}/>
       <Stack.Screen
         name="ChatScreen"
         component={ChatScreen}

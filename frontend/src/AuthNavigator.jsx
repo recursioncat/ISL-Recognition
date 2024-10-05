@@ -16,7 +16,6 @@ function AuthNavigator() {
     <Stack.Screen name="ResetPasswordScreen" component={ResetPasswordScreen} />
     <Stack.Screen name="VerifyAccountScreen" component={VerifyAccountScreen} />
     <Stack.Screen name="ForgotPassScreen" component={ForgotPassScreen} />
-    <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
   </Stack.Navigator>
   )
 }

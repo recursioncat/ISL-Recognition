@@ -87,8 +87,8 @@ export default function SignToText({ navigation }) {
                 photo
                 
               />
-               <View className="absolute top-2 left-1">
-                    <MaterialIcons name="arrow-back" size={30} color={"white"} className="" onPress={() => navigation.replace("EngToSign")} />
+               <View className="absolute top-3 left-2  items-center">
+                    <MaterialIcons name="arrow-back-ios" size={25} color="#ffffff" className="" onPress={() => navigation.replace("EngToSign")} />
                 </View>
                 
               <View className="h-28 w-full absolute bottom-0" style={{backgroundColor:'rgba(0, 0, 0, 0.89)'}}>
