@@ -44,8 +44,6 @@ cloudinary.config({
 });
 
 app.get('/', async(req, res) => {
-    const response = await speechToText({path:'C:\\Users\\Biswajit Dey\\Desktop\\ISL-Recognition\\uploads\\audios\\biswajittestaudio.mp3'}); 
-    console.log(response);
     res.send('Hello World!'); 
 });
 

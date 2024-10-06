@@ -14,12 +14,15 @@ import {UserContext} from '../../context/UserContext'; // Import UserContext
 import {Header, SaveContactIcon} from '../../components';
 import {useFocusEffect} from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+
+
 export default function ContactsScreen({navigation}) {
   // const [userEmail, setUserEmail] = useState(null);
   const {userEmail} = useContext(UserContext); // Access userEmail from context
   const [contacts, setContacts] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+
 
   // Fetch contacts once userEmail is set
   const fetchContacts = async () => {
@@ -79,12 +82,12 @@ export default function ContactsScreen({navigation}) {
 
   return (
   
-    <View className="flex-1" style={{backgroundColor: '#0B141B'}}>
-      <StatusBar backgroundColor="#0B141B" barStyle="light-content" />
+    <View className="flex-1" style={{backgroundColor: '#000000'}}>
+    {/* <StatusBar barStyle={'light-content'} backgroundColor="transparent" translucent={true} /> */}
       <Header title="SanketChat" icon="more-vert" />
-
+      
       {/* Search input */}
-      <View className="items-center w-full px-3">
+      <View className="items-center w-full px-3 mb-2">
         <TextInput
           placeholder="Search contacts..."
           placeholderTextColor={'#a3a3a3'}

@@ -13,8 +13,6 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const WebrtcRoomScreen = ({localStream, remoteStream, peerConnection, setlocalStream, setRemoteStream, setType}) => {
 
-    // console.log("localStream", localStream);
-    // console.log("remoteStream", remoteStream);
     // Handling Mic status
      const [localMicOn, setlocalMicOn] = useState(true);
 

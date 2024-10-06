@@ -1,4 +1,3 @@
-import { call } from '@google-cloud/vision/build/src/helpers.js';
 import { chatServicesController } from '../controllers/fileServicesController.js';
 import { sendMessages } from '../helpers/socketChatHandler.js';
 
@@ -30,34 +29,48 @@ export default (io) => {
         
         //Video calling P2P
         // A call intializes
-        socket.on('call', (callData) => {
-            const {calleeId, rtcMsg} = callData;
-
-            socket.to(calleeId).emit('newCall',{
-                callerId : socket.id,
-                rtcMsg : rtcMsg
+        socket.on("call", (data) => {
+            let calleeId = data.calleeId;
+            console.log("calleeId", calleeId);
+            let rtcMessage = data.rtcMessage;
+           
+            socket.to(users.get(calleeId)).emit("newCall", {
+              callerId: socket.id,
+              rtcMessage: rtcMessage,
             });
         });
-
-        //B call recieves
-        socket.on('answerCall', (callData) => {
-            const {callerId, rtcMsg} = callData;
-
-            socket.to(callerId).emit('callAnswered', {
-                calleeId : socket.id,
-                rtc : rtcMsg
+      
+        socket.on("answerCall", (data) => {
+            let callerId = data.callerId;
+            console.log("callerId", callerId);
+            let rtcMessage = data.rtcMessage;
+            console.log("rtcMessage", rtcMessage);
+            
+      
+            socket.to(callerId).emit("callAnswered", {
+              callee: socket.id,
+              rtcMessage: rtcMessage,
             });
         });
+      
+          socket.on("sendICEcandidate", (data) => {
+            console.log("ICEcandidate data", data);
+            console.log("ice self id : ", socket.id);
+            let calleeId = data.calleeId;
+            let rtcMessage = data.rtcMessage;
+      
+            socket.to(calleeId).emit("ICEcandidate", {
+              sender: socket.id,
+              rtcMessage: rtcMessage,
+            });
+          });
 
-        socket.on('ICEcandidate', (callData) => {
-            const {calleeId, rtcMsg} = callData;
-            console.log(`ICECandidate initialized for ${calleeId}`)
-
-            socket.to(calleeId).emit('ICEcandidate', {
-                callerId : socket.Id, 
-                rtcMsg : rtcMsg
-            })
-        })
+          socket.on("endCall", (data) => {
+            let calleeId = data.calleeId;
+            socket.to(users.get(calleeId)).emit("callEnded", {
+              sender: socket.id,
+            });
+          });
 
     });
 };
