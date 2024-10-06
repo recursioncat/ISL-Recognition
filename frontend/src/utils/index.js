@@ -35,5 +35,5 @@ export const serviceActions = [
     {action: 'close', icon: 'close'}
   ];
 
-export const baseUrl = 'https://e18b-2405-201-8020-380a-a046-7699-da65-6d8d.ngrok-free.app'
+export const baseUrl = 'https://57b7-2405-201-8020-380a-cbd-27a6-3939-f262.ngrok-free.app'
 // export const baseUrl = "http://192.168.29.174:3000"

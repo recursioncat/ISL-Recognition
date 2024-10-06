@@ -125,29 +125,39 @@ const ChatScreen = ({navigation, route}) => {
           peerConnection.current.setRemoteDescription(
             new RTCSessionDescription(remoteRTCMessage.current)
           );
+
           setType("WEBRTC_ROOM");
-        });
+      });
   
         socket.on("ICEcandidate", (data) => {
-          let message = data.rtcMessage;
-      
-          // When Bob gets a candidate message from Alice, he calls `addIceCandidate` to add the candidate to the remote peer description.
-      
-          if (peerConnection.current) {
-            peerConnection?.current
-              .addIceCandidate(new RTCIceCandidate(message.candidate))
-              .then((data) => {
-                console.log("SUCCESS");
-              })
-              .catch((err) => {
-                console.log("Error", err);
-              });
-          }
-        });
+  const { rtcMessage } = data;
+  const { candidate, label, id } = rtcMessage;
 
-        socket.on("callEnded", () => {
+  if (candidate && label !== null && id !== null) {
+    console.log("Adding ICE candidate");
+    const iceCandidate = new RTCIceCandidate({
+      sdpMLineIndex: label,
+      sdpMid: id,
+      candidate: candidate,
+    });
+
+    peerConnection?.current
+      .addIceCandidate(iceCandidate)
+      .then(() => {
+        console.log("ICE candidate added successfully");
+      })
+      .catch((err) => {
+        console.log("Error adding ICE candidate:", err);
+      });
+  } else {
+    console.log("Received ICE candidate with missing fields:", rtcMessage);
+  }
+});
+        
+
+      socket.on("callEnded", () => {
           processEndCall();
-        });
+      });
   
       let isFront = false;
   
@@ -172,7 +182,7 @@ const ChatScreen = ({navigation, route}) => {
               mandatory: {
                 minWidth: 500, // Provide your own width, height and frame rate here
                 minHeight: 300,
-                minFrameRate: 30,
+                minFrameRate: 60,
               },
               facingMode: isFront ? 'user' : 'environment',
               optional: videoSourceId ? [{sourceId: videoSourceId}] : [],
@@ -180,10 +190,13 @@ const ChatScreen = ({navigation, route}) => {
           })
           .then(stream => {
             // Get local stream!
+          
             setlocalStream(stream);
-  
-            // setup stream listening
-            peerConnection.current.addStream(stream);
+           
+           // Add each track (audio and video) to the peer connection
+          stream.getTracks().forEach(track => {
+             peerConnection.current.addTrack(track, stream); // Correct usage of addTrack
+           });
           })
           .catch(error => {
             // Log error
@@ -193,31 +206,41 @@ const ChatScreen = ({navigation, route}) => {
           });
       });
   
-      peerConnection.current.onaddstream = event => {
-        setRemoteStream(event.stream);
+      peerConnection.current.ontrack = (event) => {
+        console.log("ontrack sr a", event.streams[0]);
+        // When a remote stream arrives, display it in the remote video element
+        setRemoteStream(event.streams[0]);
       };
-  
+
       // Alice creates an RTCPeerConnection object with an `onicecandidate` handler, which runs when network candidates become available.
       peerConnection.current.onicecandidate = (event) => {
         if (event.candidate) {
-          // Alice sends serialized candidate data to Bob using Socket
-          sendICEcandidate({
-            calleeId: otherUserId.current,
-            rtcMessage: {
-              label: event.candidate.sdpMLineIndex,
-              id: event.candidate.sdpMid,
-              candidate: event.candidate.candidate,
-            },
-          });
+          const { sdpMLineIndex, sdpMid, candidate } = event.candidate;
+          if (sdpMLineIndex !== null && sdpMid !== null && candidate) {
+            console.log("Sending ICE candidate", event.candidate);
+            sendICEcandidate({
+              calleeId: otherUserId.current,
+              rtcMessage: {
+                label: sdpMLineIndex,
+                id: sdpMid,
+                candidate: candidate,
+              },
+            });
+          } else {
+            console.log("ICE candidate has missing fields:", event.candidate);
+          }
         } else {
           console.log("End of candidates.");
         }
       };
+      
   
       return () => {
+    
         socket.off('newCall');
         socket.off('callAnswered');
         socket.off('ICEcandidate');
+        socket.off('callEnded');
       };
     }, []);
   
@@ -245,9 +268,10 @@ async function processCall() {
     
       // 5. Bob runs the `createAnswer` method
       const sessionDescription = await peerConnection.current.createAnswer();
-    
+      
       // 6. Bob sets that as the local description and sends it to Alice
       await peerConnection.current.setLocalDescription(sessionDescription);
+
       answerCall({
         callerId: otherUserId.current,
         rtcMessage: sessionDescription,
@@ -264,8 +288,9 @@ async function processCall() {
       setType("CHAT");
     }
 
-    function processEnd(){
-      processEndCall();
+    async function processEnd(){
+      // console.log("End Call");
+      await processEndCall();
       socket.emit("endCall", {calleeId: otherUserId.current});
     }
     
@@ -277,6 +302,9 @@ async function processCall() {
       socket.emit("call", data);
     }
 
+    function sendICEcandidate(data) {
+      socket.emit("sendICEcandidate", data);
+    }
      // Set the profile picture in the header
   useLayoutEffect(() => {
     if (profilePicture) {
@@ -299,9 +327,9 @@ async function processCall() {
     case 'Outgoing_CALL':
         return <OutgoingCallScreen calleeName={recipientName} profilePicture={profilePicture} processEnd={processEnd} />;
     case 'INCOMING_CALL':
-        return <IncomingCallScreen calleeName={recipientName} profilePicture={profilePicture} processEnd={processEnd} />; // it should be the caller name and profile picture
+        return <IncomingCallScreen calleeName={recipientName} profilePicture={profilePicture} processAccept={processAccept} processEnd={processEnd} />; // it should be the caller name and profile picture
     case 'WEBRTC_ROOM':
-        return <WebrtcRoomScreen localStream={localStream} remoteStream={remoteStream} peerConnection={peerConnection} setlocalStream={setlocalStream} setType={setType} />;
+        return <WebrtcRoomScreen localStream={localStream} remoteStream={remoteStream} peerConnection={peerConnection} setlocalStream={setlocalStream} setRemoteStream={setRemoteStream} setType={setType} />;
     case 'CHAT':
         return (
     <View className="flex-1" style={{backgroundColor: '#12191f'}}>

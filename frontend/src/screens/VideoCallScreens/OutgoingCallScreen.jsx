@@ -17,7 +17,7 @@ const OutgoingCallScreen = ({ calleeName, profilePicture , processEnd }) => {
       />
 
       {/* End Call Action */}
-      <TouchableOpacity style={styles.endCallButton} onPress={()=> processEnd()} >
+      <TouchableOpacity style={styles.endCallButton} onPress={processEnd} >
         <MaterialIcons name="call-end" size={30} color="white" />
       </TouchableOpacity>
     </View>
