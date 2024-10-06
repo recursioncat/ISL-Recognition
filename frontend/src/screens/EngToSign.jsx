@@ -57,7 +57,7 @@ const EngToSign = ({ navigation }) => {
   return (
     <>
     <View className="h-full w-full" style={{backgroundColor: '#c8cbb7'}}>
-    <StatusBar backgroundColor="#000000" barStyle="light-content"/>
+        <StatusBar barStyle={'light-content'} backgroundColor="transparent" translucent={true} />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         {/* Content */}
         <View className="mt-2 mb-5 mx-6 border-solid  rounded-xl h-4/5 justify-center relative">

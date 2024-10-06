@@ -5,6 +5,7 @@ import BackButton from '../components/BackButton';
 import { baseUrl } from '../utils';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
+
 export default function SignToText({ navigation }) {
   const [cameraDevice, setCameraDevice] = useState('front');
   const device = useCameraDevice(cameraDevice);
@@ -83,7 +84,7 @@ export default function SignToText({ navigation }) {
 
   return (
     <>
-      <StatusBar backgroundColor="#000000" barStyle="light-content"/>
+      {/* <StatusBar barStyle={'light-content'} backgroundColor="transparent" translucent={true} /> */}
 
       <View className="flex-1 justify-center items-center bg-black">
         
@@ -97,9 +98,9 @@ export default function SignToText({ navigation }) {
                 photo
               />
               
-              <View className="absolute top-3 left-2  items-center">
+              {/* <View className="absolute top-3 left-2  items-center">
                   <MaterialIcons name="arrow-back-ios" size={25} color="#ffffff" onPress={() => navigation.replace("EngToSign")} />
-              </View>
+              </View> */}
                 
               <View className="h-28 w-full absolute bottom-0" style={{backgroundColor:'rgba(0, 0, 0, 0.89)'}}>
 

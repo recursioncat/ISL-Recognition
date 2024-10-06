@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { View, TextInput, Text, ActivityIndicator, TouchableOpacity, ScrollView } from 'react-native';
+import { View, TextInput, Text, ActivityIndicator, TouchableOpacity, ScrollView , StatusBar } from 'react-native';
 import axios from 'axios';
 import { UserContext } from '../../context/UserContext';
 import { baseUrl } from '../../utils';
@@ -59,8 +59,8 @@ const SaveContactScreen = ({ navigation }) => {
 
   return (
     <ScrollView className="flex-1 p-5 bg-[#000000]">
+        <View className="py-2 px-5 items-center mt-5">
         
-        <View className="py-2 px-5 items-center">
         <TouchableOpacity onPress={() => navigation.goBack()} className="absolute top-0 left-0">
             <MaterialIcons name="arrow-back-ios" size={24} color="#f59e0b"  />
         </TouchableOpacity>

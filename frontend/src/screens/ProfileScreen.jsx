@@ -136,10 +136,10 @@ const ProfileScreen = ({ navigation }) => {
 
   return (
     <ScrollView className="flex-1" style={{backgroundColor:'#000000'}}>
-        <StatusBar backgroundColor="#000000" barStyle="light-content"/>
+        {/* <StatusBar backgroundColor="#000000" barStyle="light-content"/> */}
       
       {/* Header */}
-      <View className="bg-black py-6 px-5 items-center mt-3">
+      <View className="bg-black py-6 px-5 items-center mt-6">
           <TouchableOpacity onPress={() => navigation.goBack()} className="absolute top-0 left-0">
             <MaterialIcons name="arrow-back-ios" size={24} color="#f59e0b" style={{marginLeft: 20, marginTop: 20}} />
           </TouchableOpacity>
