@@ -34,7 +34,6 @@ import {
   RTCSessionDescription,
 } from 'react-native-webrtc';
 import {IncomingCallScreen , OutgoingCallScreen , WebrtcRoomScreen} from '../index'
-import { useFocusEffect } from '@react-navigation/native';
 
 const socket = io(baseUrl);
 
@@ -60,8 +59,7 @@ const ChatScreen = ({navigation, route}) => {
   const [type, setType] = useState('CHAT'); // State to hold the type of call
   const [localStream, setlocalStream] = useState(null); // Stream of local user
   const [remoteStream, setRemoteStream] = useState(null); /* When a call is connected, the video stream from the receiver is appended to this state in the stream*/
-  const streamRef = useRef(null);
-
+  
   useEffect(() => {
     fetchUserIds(
       sender,
@@ -238,28 +236,13 @@ const ChatScreen = ({navigation, route}) => {
       
   
       return () => {
-        // Clean up when navigating away or unmounting the component
-        // Stop the camera when leaving the screen
-      if (videoRef.current) {
-        videoRef.current.stopRecording();  // If recording, stop it
-        videoRef.current = null;           // Clear camera reference
-      }
-
-    // Stop all tracks in the local stream
-    if (localStream) {
-      localStream.getTracks().forEach(track => track.stop());
-    }
-
-    // Close the peer connection
-    if (peerConnection.current) {
-      peerConnection.current.close();
-    }
+    
         socket.off('newCall');
         socket.off('callAnswered');
         socket.off('ICEcandidate');
         socket.off('callEnded');
       };
-    }, [navigation]);
+    }, []);
   
 async function processCall() {
       // 1. Alice runs the `createOffer` method for getting SDP.
@@ -302,10 +285,6 @@ async function processCall() {
       peerConnection.current.close();
       setlocalStream(null);
       setRemoteStream(null);
-      // Stop all tracks in the local stream
-      localStream?.getTracks().forEach(track => track.stop()); 
-      // Stop all tracks in the remote stream
-      remoteStream?.getTracks().forEach(track => track.stop());
       setType("CHAT");
     }
 
@@ -343,44 +322,6 @@ async function processCall() {
 
     }
   }, [profilePicture]);
-
-  function stopWebRTCStream(stream) {
-    if (stream) {
-      stream.getTracks().forEach(track => track.stop()); // Stop all tracks (video/audio)
-      console.log("WebRTC stream stopped");
-    }
-  }
-
-  const startWebRTCStream = async () => {
-    try {
-      const stream = await mediaDevices.getUserMedia({
-        video: true,
-        audio: true
-      });
-      streamRef.current = stream;  // Save the stream reference
-      console.log("WebRTC stream started");
-    } catch (error) {
-      console.error("Error accessing camera or microphone:", error);
-    }
-  };
-
-
-   // This hook will trigger when the screen gains or loses focus
-   useFocusEffect(
-    React.useCallback(() => {
-      // Screen is focused
-      console.log("ChatScreen focused");
-
-      // Start WebRTC camera stream when screen is focused
-      startWebRTCStream();
-
-      return () => {
-        // Screen is unfocused, clean up the WebRTC camera stream
-        stopWebRTCStream(streamRef.current);
-        streamRef.current = null;
-      };
-    }, [])
-  );
 
   switch (type) {
     case 'Outgoing_CALL':
