@@ -58,7 +58,7 @@ const SaveContactScreen = ({ navigation }) => {
   };
 
   return (
-    <ScrollView className="flex-1 p-5 bg-[#0B141B]">
+    <ScrollView className="flex-1 p-5 bg-[#000000]">
         
         <View className="py-2 px-5 items-center">
         <TouchableOpacity onPress={() => navigation.goBack()} className="absolute top-0 left-0">

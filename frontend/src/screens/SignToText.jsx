@@ -4,19 +4,24 @@ import { Camera, useCameraDevice } from 'react-native-vision-camera';
 import BackButton from '../components/BackButton';
 import { baseUrl } from '../utils';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
 export default function SignToText({ navigation }) {
   const [cameraDevice, setCameraDevice] = useState('front');
   const device = useCameraDevice(cameraDevice);
   const camera = useRef(null);
   const [imageData, setImageData] = useState('');
   const [takePhotoClicked, setTakePhotoClicked] = useState(false);
-  const [back, setBack] = useState(false);
   const [loading, setLoading] = useState(false); // State for loading indicator
   const [apiResponse, setApiResponse] = useState(null); // State to handle API response
   const [predictedData, setPredictedData] = useState("");
 
   useEffect(() => {
     checkPermission();
+    
+    return () => {
+      // This will run when navigating away or unmounting the component
+      stopCamera();
+    };
   }, []);
 
   const checkPermission = async () => {
@@ -24,16 +29,21 @@ export default function SignToText({ navigation }) {
     console.log('Camera permission: ', newCameraPermission);
   };
 
+  const stopCamera = () => {
+    if (camera.current) {
+      camera.current.stopRecording();  // Stop any ongoing recording
+      camera.current = null;           // Clear the camera reference
+      setImageData('');                // Reset image data if any
+    }
+  };
+
   const takePicture = async () => {
     if (camera.current == null) return;
-
     
     const image = await camera.current.takePhoto();
     setImageData(image.path);
     setTakePhotoClicked(true);
     sendImageToBackend(image.path);
-   
-    
   };
 
   const sendImageToBackend = async (imagePath) => {
@@ -77,7 +87,7 @@ export default function SignToText({ navigation }) {
 
       <View className="flex-1 justify-center items-center bg-black">
         
-          <View className="w-full h-full ">
+          <View className="w-full h-full">
                
               <Camera
                 ref={camera}
@@ -85,32 +95,32 @@ export default function SignToText({ navigation }) {
                 device={device}
                 isActive={!imageData}
                 photo
-                
               />
-               <View className="absolute top-3 left-2  items-center">
-                    <MaterialIcons name="arrow-back-ios" size={25} color="#ffffff" className="" onPress={() => navigation.replace("EngToSign")} />
-                </View>
+              
+              <View className="absolute top-3 left-2  items-center">
+                  <MaterialIcons name="arrow-back-ios" size={25} color="#ffffff" onPress={() => navigation.replace("EngToSign")} />
+              </View>
                 
               <View className="h-28 w-full absolute bottom-0" style={{backgroundColor:'rgba(0, 0, 0, 0.89)'}}>
 
                 <View className="absolute bottom-8 left-5">
-                    <MaterialIcons name="swap-vertical-circle" size={40} color={"white"} className="" onPress={() => navigation.replace("EngToSign")} />
+                  <MaterialIcons name="swap-vertical-circle" size={40} color={"white"} onPress={() => navigation.replace("EngToSign")} />
                 </View>
 
                 <View className="absolute bottom-5 left-[150]">
-                <TouchableOpacity onPress={takePicture} className="flex-1 justify-center items-center">
-                  <View className="items-center my-auto">
-                    {/* Outer circle */}
-                    <View className="border-4 border-white bg-transparent rounded-full p-1">
-                      {/* Inner circle */}
-                      <View className="border-2 border-white bg-white rounded-full p-6" />
-
+                  <TouchableOpacity onPress={takePicture} className="flex-1 justify-center items-center">
+                    <View className="items-center my-auto">
+                      {/* Outer circle */}
+                      <View className="border-4 border-white bg-transparent rounded-full p-1">
+                        {/* Inner circle */}
+                        <View className="border-2 border-white bg-white rounded-full p-6" />
+                      </View>
                     </View>
-                  </View>
-                </TouchableOpacity>
+                  </TouchableOpacity>
                 </View>
+
                 <View className="absolute bottom-9 right-5">
-                    <MaterialIcons name="flip-camera-ios" size={35} color={"white"} className="" onPress={() => cameraDevice === "front" ? setCameraDevice("back") : setCameraDevice("front")} />
+                  <MaterialIcons name="flip-camera-ios" size={35} color={"white"} onPress={() => cameraDevice === "front" ? setCameraDevice("back") : setCameraDevice("front")} />
                 </View>
 
               </View>
