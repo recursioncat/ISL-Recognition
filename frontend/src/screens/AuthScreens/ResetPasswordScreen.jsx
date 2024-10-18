@@ -84,9 +84,13 @@ export default function ResetPasswordScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <ResetPassLogo/>
-      <Header style={styles.header}>
+      {/* <Header style={styles.header}>
         Restore <Text style={styles.yellowText}>Password</Text>
-      </Header>
+      </Header> */}
+      <View className="flex-row mb-2 " >
+        <Text style={styles.firstText} className="text-slate-50 font-semibold ">Restore </Text>
+        <Text style={styles.yellowText} className="font-semibold">Password</Text>
+      </View>
       <ResetPassTextInput
         label="E-mail address"
         returnKeyType="done"
@@ -116,13 +120,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
   },
-  header: {
+  firstText: {
     color: '#fff',
-    fontSize: 30,
-    marginBottom: 10,
+    fontSize: 29,
+    marginBottom: 4,
   },
   yellowText: {
     color: '#FFE70A',
+    fontSize: 29,
+    marginBottom: 4,
   },
   textInput: {
     backgroundColor: '#000',

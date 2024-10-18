@@ -98,7 +98,7 @@ export default function ForgotPassScreen({ navigation, route }) {
           error={!!otp.error}
           errorText={otp.error}
           autoCapitalize="none"
-          description="You was received OTP code in your email."
+          description="You received OTP in your email."
         />
          <TextInput
         label="New Password"

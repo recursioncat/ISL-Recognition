@@ -12,7 +12,7 @@ const GradientResetPassButton = ({ onPress, loading }) => {
           end={{ x: 1.0, y: 0.5 }}
           style={styles.gradient}
         >
-          <Text style={styles.text}>{loading ? 'Sending.' : 'Send Code'}</Text>
+          <Text style={styles.text}>{loading ? 'Sending.' : 'Send OTP'}</Text>
         </LinearGradient>
       </TouchableOpacity>
     </View>
