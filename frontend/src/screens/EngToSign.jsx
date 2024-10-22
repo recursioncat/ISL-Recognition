@@ -57,7 +57,7 @@ const EngToSign = ({ navigation }) => {
   return (
     <>
     <View className="h-full w-full" style={{backgroundColor: '#c8cbb7'}}>
-      <StatusBar backgroundColor="#f0f0f0" barStyle="dark-content" />
+        <StatusBar barStyle={'light-content'} backgroundColor="transparent" translucent={true} />
       <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
         {/* Content */}
         <View className="mt-2 mb-5 mx-6 border-solid  rounded-xl h-4/5 justify-center relative">
@@ -89,7 +89,7 @@ const EngToSign = ({ navigation }) => {
 
           {/* Swap Button */}
           <View className="absolute bottom-5 right-2">
-            <MaterialIcons name="swap-vert" size={50} color={"white"} className="ml-2" onPress={() => navigation.replace("SignToText")} />
+            <MaterialIcons name="swap-vert" size={50} color={"white"} className="ml-2" onPress={() => navigation.navigate("SignToText")} />
           </View>
         </View>
         

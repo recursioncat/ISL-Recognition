@@ -26,5 +26,51 @@ export default (io) => {
                 }
             });
         });
+        
+        //Video calling P2P
+        // A call intializes
+        socket.on("call", (data) => {
+            let calleeId = data.calleeId;
+            console.log("calleeId", calleeId);
+            let rtcMessage = data.rtcMessage;
+           
+            socket.to(users.get(calleeId)).emit("newCall", {
+              callerId: socket.id,
+              rtcMessage: rtcMessage,
+            });
+        });
+      
+        socket.on("answerCall", (data) => {
+            let callerId = data.callerId;
+            console.log("callerId", callerId);
+            let rtcMessage = data.rtcMessage;
+            console.log("rtcMessage", rtcMessage);
+            
+      
+            socket.to(callerId).emit("callAnswered", {
+              callee: socket.id,
+              rtcMessage: rtcMessage,
+            });
+        });
+      
+          socket.on("sendICEcandidate", (data) => {
+            console.log("ICEcandidate data", data);
+            console.log("ice self id : ", socket.id);
+            let calleeId = data.calleeId;
+            let rtcMessage = data.rtcMessage;
+      
+            socket.to(calleeId).emit("ICEcandidate", {
+              sender: socket.id,
+              rtcMessage: rtcMessage,
+            });
+          });
+
+          socket.on("endCall", (data) => {
+            let calleeId = data.calleeId;
+            socket.to(users.get(calleeId)).emit("callEnded", {
+              sender: socket.id,
+            });
+          });
+
     });
 };

@@ -84,13 +84,12 @@ export default function ResetPasswordScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <ResetPassLogo/>
-      {/* <Header style={styles.header}>
-        Restore <Text style={styles.yellowText}>Password</Text>
-      </Header> */}
+      {/* <Header style={styles.header}> */}
       <View className="flex-row mb-2 " >
-        <Text style={styles.firstText} className="text-slate-50 font-semibold ">Restore </Text>
-        <Text style={styles.yellowText} className="font-semibold">Password</Text>
+        <Text className="text-slate-50 text-3xl font-semibold ">Restore </Text>
+        <Text style={styles.yellowText} className="text-3xl font-semibold">Password</Text>
       </View>
+      {/* </Header> */}
       <ResetPassTextInput
         label="E-mail address"
         returnKeyType="done"

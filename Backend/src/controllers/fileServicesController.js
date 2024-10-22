@@ -10,6 +10,12 @@ export const fileServicesController = async (req, res) => {
 
     const file = req.file;
     let result;
+    
+    //for URLs
+    if(req.body.imgUrl) {
+        result = await imgToText(req.body.imgUrl);
+        return responseHandler(res, 200, 'success', 'done', result);
+    }
 
     if(!file && !req.body.text) { //{ reminder biswajit: send text as json {text:data} }
 
@@ -39,7 +45,9 @@ export const fileServicesController = async (req, res) => {
 
         result = await textTranslate(text);
         
-    } 
+    } else {
+        return errorResponseHandler(res, 400, 'error', 'Both files sent');
+    }
     // console.log(result);
 
     return responseHandler(res, 200, 'success', 'done', result);

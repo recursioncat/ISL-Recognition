@@ -4,18 +4,25 @@ import { Camera, useCameraDevice } from 'react-native-vision-camera';
 import BackButton from '../components/BackButton';
 import { baseUrl } from '../utils';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+
+
 export default function SignToText({ navigation }) {
-  const device = useCameraDevice('back');
+  const [cameraDevice, setCameraDevice] = useState('front');
+  const device = useCameraDevice(cameraDevice);
   const camera = useRef(null);
   const [imageData, setImageData] = useState('');
   const [takePhotoClicked, setTakePhotoClicked] = useState(false);
-  const [back, setBack] = useState(false);
   const [loading, setLoading] = useState(false); // State for loading indicator
   const [apiResponse, setApiResponse] = useState(null); // State to handle API response
   const [predictedData, setPredictedData] = useState("");
 
   useEffect(() => {
     checkPermission();
+    
+    return () => {
+      // This will run when navigating away or unmounting the component
+      stopCamera();
+    };
   }, []);
 
   const checkPermission = async () => {
@@ -23,16 +30,21 @@ export default function SignToText({ navigation }) {
     console.log('Camera permission: ', newCameraPermission);
   };
 
+  const stopCamera = () => {
+    if (camera.current) {
+      camera.current.stopRecording();  // Stop any ongoing recording
+      camera.current = null;           // Clear the camera reference
+      setImageData('');                // Reset image data if any
+    }
+  };
+
   const takePicture = async () => {
     if (camera.current == null) return;
-
     
     const image = await camera.current.takePhoto();
     setImageData(image.path);
     setTakePhotoClicked(true);
     sendImageToBackend(image.path);
-   
-    
   };
 
   const sendImageToBackend = async (imagePath) => {
@@ -72,79 +84,50 @@ export default function SignToText({ navigation }) {
 
   return (
     <>
-      <StatusBar backgroundColor="#f0f0f0" barStyle="dark-content" />
-      {back && (
-        <TouchableOpacity onPress={() => navigation.navigate('EngToSign')} className="ml-4 mt-5">
-          <BackButton />
-        </TouchableOpacity>
-      )}
-      <Text className="text-4xl font-bold text-center mt-5 text-black">Sign to Text</Text>
-      <View className="flex-1 justify-center items-center">
-        {!takePhotoClicked ? (
-          <View className="w-64 h-64 border-2 border-gray-300 justify-center items-center relative">
-            <Text className="text-center text-gray-700">Take a photo</Text>
-            <TouchableOpacity
-              onPress={() => {
-                setTakePhotoClicked(true);
-                setBack(true);
-              }}
-              className="absolute bottom-4 bg-white p-4 rounded-full"
-            >
-              <Text className="text-black">Open Camera</Text>
-            </TouchableOpacity>
-          </View>
-        ) : (
-          <View className="w-64 h-64 relative">
-            {imageData ? (
-              <View className="w-full h-full justify-center items-center">
-                <Image source={{ uri: 'file://' + imageData }} className="w-64 h-64" />
-                <View className="justify-center mx-auto mt-5">
-                  <TouchableOpacity
-                    onPress={() => {
-                      setImageData('');
-                      setTakePhotoClicked(true);
-                      setBack(true);
-                      setApiResponse(null); // Reset API response
-                    }}
-                    className="bg-white p-4 rounded-full"
-                  >
-                    <Text className="text-black">Retake</Text>
-                  </TouchableOpacity>
-                  {loading && ( // Show loading indicator under Retake button
-                    <ActivityIndicator size="small" color="#000" className="mt-2" />
-                  )}
-                  {apiResponse && ( // Display API response if available
-                  <View>
-                    {/* <Text className="text-center text-green-500 mt-2">{apiResponse.message}</Text> */}
-                    <Text className="text-center text-lg text-green-500 mt-2">{predictedData}</Text>
-                  </View>
-                  )}
-                </View>
-              </View>
-            ) : (
+      {/* <StatusBar barStyle={'light-content'} backgroundColor="transparent" translucent={true} /> */}
+
+      <View className="flex-1 justify-center items-center bg-black">
+        
+          <View className="w-full h-full">
+               
               <Camera
                 ref={camera}
-                className="w-full h-full"
+                className="w-full h-full mt-1"
                 device={device}
                 isActive={!imageData}
                 photo
               />
-            )}
-            {!imageData && (
-              <View className="h-full justify-center m-auto">
-                <TouchableOpacity
-                  onPress={takePicture}
-                  className="bg-white p-6 rounded-full"
-                >
-                  <Text className="text-black">Click</Text>
-                </TouchableOpacity>
+              
+              {/* <View className="absolute top-3 left-2  items-center">
+                  <MaterialIcons name="arrow-back-ios" size={25} color="#ffffff" onPress={() => navigation.replace("EngToSign")} />
+              </View> */}
+                
+              <View className="h-28 w-full absolute bottom-0" style={{backgroundColor:'rgba(0, 0, 0, 0.89)'}}>
+
+                <View className="absolute bottom-8 left-5">
+                  <MaterialIcons name="swap-vertical-circle" size={40} color={"white"} onPress={() => navigation.replace("EngToSign")} />
+                </View>
+
+                <View className="absolute bottom-5 left-[150]">
+                  <TouchableOpacity onPress={takePicture} className="flex-1 justify-center items-center">
+                    <View className="items-center my-auto">
+                      {/* Outer circle */}
+                      <View className="border-4 border-white bg-transparent rounded-full p-1">
+                        {/* Inner circle */}
+                        <View className="border-2 border-white bg-white rounded-full p-6" />
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+
+                <View className="absolute bottom-9 right-5">
+                  <MaterialIcons name="flip-camera-ios" size={35} color={"white"} onPress={() => cameraDevice === "front" ? setCameraDevice("back") : setCameraDevice("front")} />
+                </View>
+
               </View>
-            )}
+
           </View>
-        )}
-        <View className="absolute bottom-5 right-2">
-            <MaterialIcons name="swap-vert" size={50} color={"black"} className="ml-2" onPress={() => navigation.replace("EngToSign")} />
-          </View>
+       
       </View>
     </>
   );
