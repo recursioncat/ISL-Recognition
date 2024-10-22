@@ -7,8 +7,8 @@ export default function ResetPassLogo() {
 
 const styles = StyleSheet.create({
   image: {
-    width: 114,
-    height: 114,
+    width: 30,
+    height: 30,
     marginBottom: 4,
   },
 })

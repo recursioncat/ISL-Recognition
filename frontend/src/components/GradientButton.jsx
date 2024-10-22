@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, TouchableOpacity, StyleSheet, View } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
-const GradientButton = ({onPress}) => {
+const GradientButton = ({onPress, text}) => {
   return (
     <View style={styles.container} >
       <TouchableOpacity style={styles.button} onPress={onPress}>
@@ -12,7 +12,7 @@ const GradientButton = ({onPress}) => {
           end={{ x: 1.0, y: 0.5 }}
           style={styles.gradient}
         >
-          <Text style={styles.text}>Let's Get Started</Text>
+          <Text style={styles.text}>{text}</Text>
         </LinearGradient>
       </TouchableOpacity>
     </View>
@@ -26,21 +26,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   button: {
-    width: 340, // Adjust width according to preference
-    borderColor: '#F4D03F', // Matching the start color of the gradient
-    borderWidth: 3, // 3px border width
+    width: 340, 
+    borderColor: '#F4D03F',
+    borderWidth: 3, 
     overflow: 'hidden',
-    padding: 2 // Ensure gradient respects border radius
+    padding: 2
   },
   gradient: {
-    padding: 15, // Padding to increase button height and space around text
+    padding: 12, 
     justifyContent: 'center',
     alignItems: 'center',
   },
   text: {
-    color: '#000', // Black text color
-    fontSize: 18, // Font size similar to the image
-    fontWeight: 'bold', // Bold font style
+    color: '#000', 
+    fontSize: 18, 
+    fontWeight: 'bold',
   },
 });
 

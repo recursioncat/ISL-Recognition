@@ -1,106 +1,92 @@
-import React, { useState } from 'react'
-import {Background , BackButton , Logo , Header , TextInput , Button} from '../../components'
-import { emailValidator } from '../../helpers/emailValidator'
-import { passwordValidator } from '../../helpers/passwordValidator'
+import React, { useState } from 'react'; 
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import Toast from 'react-native-toast-message';
-import axios from 'axios'
-import { baseUrl } from '../../utils'
+import axios from 'axios';
+import { baseUrl } from '../../utils';
+import GradientButton from '../../components/GradientButton'; 
+import ResetPassTextInput from '../../components/ResetPassTextInput';
+import { GradientBackground, Logo } from '../../components';
 
 export default function ForgotPassScreen({ navigation, route }) {
-    
-  const [otp, setOtp] = useState({ value: '', error: '' });
   const [password, setPassword] = useState({ value: '', error: '' });
   const [confirmPassword, setConfirmPassword] = useState({ value: '', error: '' });
-
   const { email } = route.params;
-  
-    const handleOtpSent = async ({ email , otp , password , confirmPassword}) => {
-      // Validate input
-      if (!otp || !password || !confirmPassword) {
-        Toast.show({
-          type: 'error',
-          text1: 'Invalid input',
-          text2: 'Please fill in all fields',
-          position: 'bottom',
-          visibilityTime: 3000,
-          swipeable: true,
-        });
-        return;
-      }
-    
-      try {
 
-        const response = await axios.post(`${baseUrl}/api/v1/auth/resetpassword`, {
-          email,otp,password,confirmPassword
-        });
-        
-        return response.data.statusCode;
-  
-      } catch (error) {
-       
-        console.error('Reset Password Error:', error.message); // Improved error logging
-         console.log(error);
-        
-        Toast.show({
-          type: 'error',
-          text1: 'Reset password failed',
-          text2: error.response?.data?.message || 'Something went wrong!', // Show error details
-          position: 'bottom',
-          visibilityTime: 3000,
-          swipeable: true,
-        });
-    
-        return error.response?.data;
-    };
-  
+  const handlePasswordReset = async ({ email, password, confirmPassword }) => {
+    if (!password || !confirmPassword) {
+      Toast.show({
+        type: 'error',
+        text1: 'Invalid input',
+        text2: 'Please fill in all fields',
+        position: 'bottom',
+        visibilityTime: 3000,
+        swipeable: true,
+      });
+      return;
     }
-  
-    const sendResetPasswordEmail = async() => {
-      const passwordError = passwordValidator(password.value);
-      const samePasswordError = passwordValidator(confirmPassword.value);
 
-      const response = await handleOtpSent({ email:email , otp: otp.value, password: password.value, confirmPassword: confirmPassword.value });
+    try {
+      const response = await axios.post(`${baseUrl}/api/v1/auth/resetpassword`, {
+        email,
+        password,
+        confirmPassword,
+      });
+      return response.data.statusCode;
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Reset password failed',
+        text2: error.response?.data?.message || 'Something went wrong!',
+        position: 'bottom',
+        visibilityTime: 3000,
+        swipeable: true,
+      });
+      return error.response?.data;
+    }
+  };
+
+  const sendResetPasswordEmail = async () => {
+    const response = await handlePasswordReset({ email, password: password.value, confirmPassword: confirmPassword.value });
+    
+    if (response === 200) {
+      Toast.show({
+        type: 'success',
+        text1: 'Password reset',
+        text2: 'Password reset successfully',
+        position: 'bottom',
+        visibilityTime: 1000,
+        swipeable: true,
+        onHide: () => navigation.navigate('LoginScreen'),
+      });
+    } else {
+      Toast.show({
+        type: 'error',
+        text1: 'Password reset failed',
+        text2: 'Check your password',
+        position: 'bottom',
+        visibilityTime: 3000,
+        swipeable: true,
+      });
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <GradientBackground/>
       
-      if (response == 200) {
-        Toast.show({
-          type: 'success',
-          text1: 'Password reset', 
-          text2: 'Password reset successfully',
-          position: 'bottom',
-          visibilityTime: 1000,
-          swipeable: true,
-          onHide: () => navigation.navigate('LoginScreen'),
-        });
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Password reset failed',
-          text2: 'Check your otp and password',
-          position: 'bottom',
-          visibilityTime: 3000,
-          swipeable: true,
-        });
-      }
+      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <Icon name="arrow-back" size={24} color="#fff" />
+      </TouchableOpacity>
+
+      <View style={styles.headerContainer}>
+        <Text style={styles.whiteText}>Reset </Text>
+        <Text style={styles.yellowText}>Password </Text>
+      
+      </View>
      
-    }
-  
-    return (
-      <>
-      <Background>
-        <BackButton goBack={navigation.goBack} />
-        <Logo />
-        <Header>Restore Password</Header>
-        <TextInput
-          label="OTP code"
-          returnKeyType="done"
-          value={otp.value}
-          onChangeText={(text) => setOtp({ value: text, error: '' })}
-          error={!!otp.error}
-          errorText={otp.error}
-          autoCapitalize="none"
-          description="You received OTP in your email."
-        />
-         <TextInput
+
+      <ResetPassTextInput
         label="New Password"
         returnKeyType="done"
         value={password.value}
@@ -108,10 +94,10 @@ export default function ForgotPassScreen({ navigation, route }) {
         error={!!password.error}
         errorText={password.error}
         secureTextEntry
-        description="Password should be at least 5 characters long"
+        description="Password must contain at least 8 characters"
       />
 
-    <TextInput
+      <ResetPassTextInput
         label="Confirm Password"
         returnKeyType="done"
         value={confirmPassword.value}
@@ -119,16 +105,50 @@ export default function ForgotPassScreen({ navigation, route }) {
         error={!!confirmPassword.error}
         errorText={confirmPassword.error}
         secureTextEntry
-        description="Please confirm your password"
+        description="Please confirm your new password"
       />
-        <Button
-          mode="contained"
-          onPress={sendResetPasswordEmail}
-          style={{ marginTop: 16 }}
-        >
-          Send Instructions
-        </Button>
-      </Background>
-      </>
-    )
-  }
+
+      <View style={styles.footerContainer}>
+        <GradientButton onPress={sendResetPasswordEmail} 
+        text = "Change Password"
+        style={styles.button} />
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#000',
+    justifyContent: 'flex-start',
+    padding: 20,
+  },
+  backButton: {
+    position: 'absolute',
+    top: 40,
+    left: 16,
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    marginTop: 54,
+    marginBottom: 10,
+  },
+  whiteText: {
+    color: '#fff',
+    fontSize: 36,
+    fontWeight: 'bold',
+  },
+  yellowText: {
+    color: '#FFE70A',
+    fontSize: 36,
+    fontWeight: 'bold',
+  },
+  footerContainer: {
+    position: 'absolute',
+    bottom: 30,
+    left: 20,
+    right: 20,
+  },
+});
+

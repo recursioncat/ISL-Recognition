@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   button: {
-    width: 240,
+    width: 340,
     borderColor: '#F4D03F',
     borderWidth: 3,
     overflow: 'hidden',

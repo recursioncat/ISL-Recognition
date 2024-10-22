@@ -11,7 +11,7 @@ export default function GradientBackground() {
       <StatusBar
         barStyle="light-content"
         translucent
-        backgroundColor="transparent"
+        backgroundColor="transparent" 
       />
       {/* Base Gradient: Golden to Pink (Horizontal Blend) */}
       <LinearGradient
