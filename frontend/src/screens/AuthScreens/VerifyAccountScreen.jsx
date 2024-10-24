@@ -95,7 +95,7 @@ export default function VerifyAccountScreen({ navigation, route }) {
           error={!!otp.error}
           errorText={otp.error}
           autoCapitalize="none"
-          description="You was received OTP code in your email."
+          description="You have received OTP code in your email."
         />
       
         <Button

@@ -1,15 +1,13 @@
 import React, { useState } from 'react'; 
-import { View, Text, StyleSheet } from 'react-native';
-import { Header, TextInput } from '../../components'; 
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { emailValidator } from '../../helpers/emailValidator';
 import Toast from 'react-native-toast-message';
 import axios from 'axios';
 import { baseUrl } from '../../utils';
-
-//imported these
 import GradientResetPassButton from '../../components/GradientResetPassButton'; 
-import ResetPassLogo from '../../components/ResetPassLogo';
 import ResetPassTextInput from '../../components/ResetPassTextInput';
+import { GradientBackground, GradientButton } from '../../components';
 
 export default function ResetPasswordScreen({ navigation }) {
   const [email, setEmail] = useState({ value: '', error: '' });
@@ -67,7 +65,7 @@ export default function ResetPasswordScreen({ navigation }) {
         position: 'bottom',
         visibilityTime: 3000,
         swipeable: true,
-        onHide: () => navigation.navigate('ForgotPassScreen', { email: email.value }),
+        onHide: () => navigation.navigate('EnterOtpScreen', { email: email.value }),
       });
     } else {
       Toast.show({
@@ -82,14 +80,28 @@ export default function ResetPasswordScreen({ navigation }) {
   };
 
   return (
+    
     <View style={styles.container}>
-      <ResetPassLogo/>
-      {/* <Header style={styles.header}> */}
-      <View className="flex-row mb-2 " >
-        <Text className="text-slate-50 text-3xl font-semibold ">Restore </Text>
-        <Text style={styles.yellowText} className="text-3xl font-semibold">Password</Text>
+      {/* Top gradient for the status bar */}
+      <GradientBackground/>
+    
+      {/* Back button */}
+      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <Icon name="arrow-back" size={24} color="#fff" />
+      </TouchableOpacity>
+
+      {/* Header text */}
+      <View style={styles.headerContainer}>
+        <Text style={styles.whiteText}>Restore </Text>
+        <Text style={styles.yellowText}>Password</Text>
       </View>
-      {/* </Header> */}
+
+      {/* Informative text */}
+      <Text style={styles.infoText}>
+        Please ensure that the Email ID provided is correct to receive the OTP.
+      </Text>
+
+      {/* Email input field */}
       <ResetPassTextInput
         label="E-mail address"
         returnKeyType="done"
@@ -103,10 +115,20 @@ export default function ResetPasswordScreen({ navigation }) {
         keyboardType="email-address"
         style={styles.textInput}
       />
-      <Text style={styles.infoText}>
+
+      {/* Informative text */}
+      <Text style={styles.notifyinfoText}>
         You will receive an email with a password reset code.
       </Text>
-      <GradientResetPassButton onPress={sendResetPasswordEmail} loading={loading} />
+
+      {/* Reset button and footer */}
+      <View style={styles.footerContainer}>
+        <GradientResetPassButton onPress={sendResetPasswordEmail} loading={loading} style={styles.button} />
+        <Text style={styles.footerText}>
+          If you encounter any issues, kindly check your network connection or contact support for&nbsp;
+          <Text style={styles.assistanceText}>assistance.</Text>
+        </Text>
+      </View>
     </View>
   );
 }
@@ -115,29 +137,62 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#000',
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'flex-start',
     padding: 20,
   },
-  header: {
-    color: '#fff',
-    fontSize: 30,
+  backButton: {
+    position: 'absolute',
+    top: 40,
+    left: 16,
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    marginTop: 54,
     marginBottom: 10,
+  },
+  whiteText: {
+    color: '#fff',
+    fontSize: 36,
+    fontWeight: 'bold',
   },
   yellowText: {
     color: '#FFE70A',
+    fontSize: 36,
+    fontWeight: 'bold',
   },
   textInput: {
     backgroundColor: '#000',
-    color: '#000',
     width: '100%',
-    marginBottom: -5,
+    marginBottom: -6,
   },
   infoText: {
+    fontSize: 15,
+    color: '#fff',
+    alignSelf: 'flex-start',
+    paddingRight: 66,
+    marginBottom: 15,
+  },
+  notifyinfoText: {
     fontSize: 12,
     color: '#fff',
     alignSelf: 'flex-start',
-    marginLeft: 5,
     marginBottom: 20,
+    marginLeft: 2,
+  },
+  footerContainer: {
+    position: 'absolute',
+    bottom: 30, // Positions the container above the screen bottom
+    left: 20,
+    right: 20,
+  },
+  footerText: {
+    fontSize: 12,
+    color: '#fff',
+    textAlign: 'center',
+    margin: 7,
+  },
+  assistanceText: {
+    color: '#FFE70A', 
+    textDecorationLine: 'underline', 
   },
 });

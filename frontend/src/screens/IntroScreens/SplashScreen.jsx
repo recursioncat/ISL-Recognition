@@ -30,7 +30,7 @@ const SplashScreen = ({ navigation }) => {
     <View style={styles.container}>
 
       <StatusBar
-        backgroundColor="#131008"
+        backgroundColor="#0D0C0A"
       />
       <Image
         source={require('../../assets/applogo3.png')}
@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#131008',
+    backgroundColor: '#0D0C0A',
   },
   activityIndicator: {
     alignItems: 'center',
