@@ -16,3 +16,4 @@ export {default as ImageViewer} from './ChatScreens/ImageViewer';
 export {default as IncomingCallScreen} from './VideoCallScreens/IncomingCallScreen';
 export {default as OutgoingCallScreen} from './VideoCallScreens/OutgoingCallScreen';
 export {default as WebrtcRoomScreen} from './VideoCallScreens/WebrtcRoomScreen';
+export {default as GoogleAuthScreen} from './AuthScreens/GoogleAuthScreen';
