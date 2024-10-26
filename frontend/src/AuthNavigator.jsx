@@ -1,6 +1,6 @@
 import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
-import { LoginScreen, RegisterScreen, ResetPasswordScreen, ForgotPassScreen , VerifyAccountScreen, ProfileScreen, GoogleAuthScreen } from './screens/index'
+import { LoginScreen, RegisterScreen, ResetPasswordScreen, ForgotPassScreen , VerifyAccountScreen, ProfileScreen, EnterOtpScreen } from './screens/index'
 const Stack = createStackNavigator()
 
 function AuthNavigator() {
@@ -18,7 +18,7 @@ function AuthNavigator() {
     <Stack.Screen name="ResetPasswordScreen" component={ResetPasswordScreen} />
     <Stack.Screen name="VerifyAccountScreen" component={VerifyAccountScreen} />
     <Stack.Screen name="ForgotPassScreen" component={ForgotPassScreen} />
-   
+    <Stack.Screen name="EnterOtpScreen" component={EnterOtpScreen} />
   </Stack.Navigator>
   )
 }

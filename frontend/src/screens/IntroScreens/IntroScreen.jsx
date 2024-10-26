@@ -41,7 +41,7 @@ const IntroScreen = ({navigation}) => {
         </Text>
       </View>
       <View className="flex-1">
-        <GradientButton onPress={handleButtonPress} />
+        <GradientButton onPress={handleButtonPress} text="Let's Get Started"/>
       </View>
     </View>
   );
@@ -53,6 +53,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
+    //marginTop: 20,
   },
   image: {
     width: '100%',
