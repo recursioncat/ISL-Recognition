@@ -68,8 +68,8 @@ function Tabs() {
       />
       <Tab.Screen
         name="Account"
-        // component={ProfileScreen}
-        component={GoogleAuthScreen}
+        component={ProfileScreen}
+        // component={GoogleAuthScreen}
         options={{
           tabBarLabel: 'Communities',
           tabBarIcon: ({color, size}) => (

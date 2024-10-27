@@ -80,9 +80,15 @@ export const loginUser = async (req, res) => {
 
 export const googleAuth = async (req, res) => {
 
-    const { name, email, photo } = req.body.data.user;
+    // console.log(req.body);
 
-    const authType = req.body.type;
+    const { name, email, photo } = req.body.userInfo.data.user;
+
+
+    const authType = req.body.userInfo.type;
+
+    console.log(authType);
+    console.log(name, email, photo);
 
     if (!name || !email) {
         return errorResponseHandler(res, 400, "error", "Google auth data not found");
