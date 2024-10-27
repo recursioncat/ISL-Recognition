@@ -80,15 +80,13 @@ export const loginUser = async (req, res) => {
 
 export const googleAuth = async (req, res) => {
 
-    // console.log(req.body);
-
+    if (!req.body.userInfo || !req.body.userInfo.data || !req.body.userInfo.data.user) {
+        return errorResponseHandler(res, 400, "error", "Google auth data not found");
+    }
+    
     const { name, email, photo } = req.body.userInfo.data.user;
-
-
+    
     const authType = req.body.userInfo.type;
-
-    console.log(authType);
-    console.log(name, email, photo);
 
     if (!name || !email) {
         return errorResponseHandler(res, 400, "error", "Google auth data not found");
@@ -104,7 +102,7 @@ export const googleAuth = async (req, res) => {
             userExists.isVerified = true; //by using google auth old unvarified user is now verified
             const token = jwt.sign({ email: userExists.email, id: userExists._id, verified: userExists.isVerified }, process.env.JWT_SECRET, { expiresIn: "60d" });
             userExists.token = token; //updating token
-            userExists.save();
+            await userExists.save();
             return responseHandler(res, 200, "success", "User logged in successfully through Google", token);
         } else {
             const userName = generateFromEmail(email, 5, 10, "sanket");
@@ -119,7 +117,7 @@ export const googleAuth = async (req, res) => {
 
             const token = jwt.sign({ email: user.email, id: user._id, verified: user.isVerified }, process.env.JWT_SECRET, { expiresIn: "60d" });
             user.token = token;
-            user.save();
+            await user.save();
             return responseHandler(res, 200, "success", "User registered successfully through Google", token);
 
         }
