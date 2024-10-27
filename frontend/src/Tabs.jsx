@@ -4,7 +4,8 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import TranslatorNavigator from './TranslatorNavigator';
 import ChatingNavigator from './ChatingNavigator';
 import ProfileScreen from './screens/ProfileScreen';
-import Testing from './screens/Testing';
+import GoogleAuthScreen from './screens/AuthScreens/GoogleAuthScreen';
+
 
 
 const Tab = createBottomTabNavigator();
@@ -67,7 +68,8 @@ function Tabs() {
       />
       <Tab.Screen
         name="Account"
-        component={Testing}
+        // component={ProfileScreen}
+        component={GoogleAuthScreen}
         options={{
           tabBarLabel: 'Communities',
           tabBarIcon: ({color, size}) => (
