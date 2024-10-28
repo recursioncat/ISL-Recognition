@@ -136,7 +136,8 @@ const GoogleSignIn = async () => {
     if(response.status === 200) {
      
       await AsyncStorage.setItem('token', response.data.data);
-      // setUserEmail(email.value);
+      
+      setUserEmail(userInfo.data.user.email);
       Toast.show({
         type: 'success',
         text1: 'User Login successful',
