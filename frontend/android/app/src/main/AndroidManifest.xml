@@ -29,7 +29,7 @@
       android:supportsRtl="true">
       <meta-data
     android:name="com.google.android.gms.auth.api.apikey"
-    android:value="13700200648-mpvmbm5n4ncv1okcjkijl3nfa1qb3jfg.apps.googleusercontent.com" /> <!-- Replace with your actual web client id -->
+    android:value="13700200648-mpvmbm5n4ncv1okcjkijl3nfa1qb3jfg.apps.googleusercontent.com" /> 
 
       <activity
         android:name=".MainActivity"

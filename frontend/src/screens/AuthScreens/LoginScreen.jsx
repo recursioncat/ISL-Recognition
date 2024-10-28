@@ -15,6 +15,10 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 GoogleSignin.configure({
   webClientId: '13700200648-nrcmepkts63h3r4teapaoco467vppvgh.apps.googleusercontent.com', 
+  scopes: ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/userinfo.profile'], 
+  offlineAccess: true,
+  forceCodeForRefreshToken: true,
+
 });
 
 export default function LoginScreen({ navigation }) {
