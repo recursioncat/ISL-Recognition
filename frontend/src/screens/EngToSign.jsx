@@ -72,14 +72,14 @@ const EngToSign = ({navigation}) => {
         </View>
       </View>
 
-      <View className="bg-slate-50 py-3 absolute bottom-0">
+      <View className="bg-[#000000] py-3 absolute bottom-0 opacity-90 ">
         <ScrollView horizontal className="flex-row gap-2 mx-9">
           {suggestions.map(message => (
             <TouchableOpacity
               key={message.id}
               onPress={() => console.log('Handle model animation')}>
               <View>
-                <Text className="text-center text-white border-solid rounded-md bg-black px-2 py-1 text-md font-semibold">
+                <Text className="text-center text-[#f59e0b] border-solid rounded-md bg-[#1A2130] px-2 py-1 text-md font-semibold">
                   {message.message}
                 </Text>
               </View>
@@ -93,22 +93,22 @@ const EngToSign = ({navigation}) => {
               placeholder="Type to Translate"
               value={translationText}
               onChangeText={handleTextChange}
-              placeholderTextColor="black"
-              className="pr-10 text-black"
+              placeholderTextColor="#f59e0b"
+              className="pr-10 text-[#f59e0b]"
             />
 
             {translationText === '' && (
               <View className="absolute right-3 top-1/4 transform -translate-y-1/2">
-                <FontAwesome5 name="camera" size={23} color="#fbb06a" />
+                <FontAwesome5 name="camera" size={23} color="#f59e0b" />
               </View>
             )}
           </View>
 
           <TouchableOpacity
             onPress={() => console.log('Translate')}
-            className="mx-auto bg-red-300 w-10 h-10 justify-center items-center border-solid rounded-3xl">
+            className="mx-auto bg-[#f59e0b] w-10 h-10 justify-center items-center border-solid rounded-3xl">
             {translationText === '' ? (
-              <MaterialIcons name="keyboard-voice" size={23} color="white" />
+              <MaterialIcons name="keyboard-voice" size={26} color="white" />
             ) : (
               <MaterialIcons name="send" size={23} color="white" />
             )}
