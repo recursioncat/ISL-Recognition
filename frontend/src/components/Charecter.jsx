@@ -9,7 +9,7 @@ export default function Character(props) {
   const { nodes, materials } = useGLTF(require('../assets/Models/BOY_CHARACTER.glb'))
   return (
     // <group {...props} dispose={null} scale={11} position={[1.9,-11,-5]}>
-    <group {...props} dispose={null} scale={5} position={[0.2,-2,0]}>
+    <group {...props} dispose={null} scale={8} position={[0,-5.3,0]}>
       <mesh castShadow receiveShadow geometry={nodes.body_1.geometry} material={materials.shirt} />
       <mesh castShadow receiveShadow geometry={nodes.body_2.geometry} material={materials.shorts} />
       <mesh castShadow receiveShadow geometry={nodes.body_3.geometry} material={materials.shoe} />
