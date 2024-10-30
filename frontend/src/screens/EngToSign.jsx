@@ -16,6 +16,9 @@ import {suggestions} from '../utils/index.js';
 import {Canvas} from '@react-three/fiber';
 import useControls from 'r3f-native-orbitcontrols';
 import Character from '../components/Charecter.jsx';
+import axios from 'axios';
+import { API_URL } from '@env';
+
 
 const EngToSign = ({navigation}) => {
   const [translationText, setTranslationText] = useState('');
