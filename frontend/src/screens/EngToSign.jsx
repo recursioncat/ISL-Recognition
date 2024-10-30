@@ -1,105 +1,88 @@
-import React, { useState, useRef } from 'react';
-import { View, Image, Text, TextInput, ScrollView, KeyboardAvoidingView, Platform, StatusBar, TouchableOpacity } from 'react-native';
+import React, {useState, useRef, Suspense} from 'react';
+import {
+  View,
+  Image,
+  Text,
+  TextInput,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  StatusBar,
+  TouchableOpacity,
+} from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { suggestions } from '../utils/index.js';
-import Video from 'react-native-video';
+import {suggestions} from '../utils/index.js';
+import {Canvas} from '@react-three/fiber';
+import useControls from 'r3f-native-orbitcontrols';
+import Character from '../components/Charecter.jsx';
+import axios from 'axios';
+import { API_URL } from '@env';
 
-const EngToSign = ({ navigation }) => {
+
+const EngToSign = ({navigation}) => {
   const [translationText, setTranslationText] = useState('');
-  const [videoSource, setVideoSource] = useState(null); // State for the current video source
-  const [isVideoLoading, setIsVideoLoading] = useState(false); // State to manage video loading
-  const [playCount, setPlayCount] = useState(0); // State to track the number of plays
-  const videoRef = useRef(null);
+  const [OrbitControls, events] = useControls();
 
-  // Handle text change in input
-  const handleTextChange = (text) => {
+  const handleTextChange = text => {
     setTranslationText(text);
-  };
-
-  // Handle the send button click or suggested message click
-  const handlePlayVideo = (text) => {
-    if (!text) return;
-
-    setIsVideoLoading(true);
-    setTranslationText(text);
-
-    // Assume you have a mapping of text to video files
-    const videoMap = {
-      "hello": require('../assets/ISL_hello_AM_v2.mp4'),
-      "help" : require('../assets/ISL_Help_AM.mp4'),
-      "are_you_okay" : require('../assets/ISL_Are_u_okay_AM.mp4'),
-      "take_medicine" : require('../assets/ISL_Take_Medichine_AM.mp4'),
-      "i_am_fine" : require('../assets/I_am_fine_AM.mp4'),
-      // Add more mappings as needed
-    };
-
-    
-    setVideoSource(videoMap[text.toLowerCase().trim().replace(/ /g, '_')]);
-    setPlayCount(0); // Reset play count when a new video is selected
-  };
-
-  // Handle video load event
-  const handleVideoLoad = () => {
-    setIsVideoLoading(false); // Hide the loading state once the video is loaded
-  };
-
-  // Handle video end event
-  const handleVideoEnd = () => {
-    setPlayCount((prevCount) => prevCount + 1);
-    if (playCount < 1) {
-      videoRef.current.seek(0); // Replay the video once
-    } else {
-      setVideoSource(null); // Stop the video after two plays
-    }
   };
 
   return (
-    <>
-    <View className="h-full w-full" style={{backgroundColor: '#c8cbb7'}}>
-        <StatusBar barStyle={'light-content'} backgroundColor="transparent" translucent={true} />
-      <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-        {/* Content */}
-        <View className="mt-2 mb-5 mx-6 border-solid  rounded-xl h-4/5 justify-center relative">
-          {/* Image as placeholder while loading video or when no video is selected */}
-          {(isVideoLoading || !videoSource) && (
-            <View className="w-full h-full justify-center items-center">
-              <Image source={require('../assets/3dmodel.png')} className="w-full border-solid rounded-xl h-full mx-auto" />
-              {isVideoLoading && (
-                <Text className="absolute text-white font-semibold text-lg bottom-5">Loading your video...</Text>
-              )}
-            </View>
-          )}
+    // <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1, backgroundColor: '#c8cbb7' }}>
+    <View className="flex-1" style={{backgroundColor : '#E5E4E2'}}>
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor="transparent"
+        translucent
+      />
 
-          {/* Video Player */}
-          {videoSource && (
-            <Video
-              source={videoSource}
-              ref={videoRef}
-              className="w-full border-solid rounded-xl h-full mx-auto"
-              onLoad={handleVideoLoad} // Handle video load event
-              onEnd={handleVideoEnd} // Handle video end event
-              onError={() => setIsVideoLoading(false)} // Handle errors
-              paused={isVideoLoading} // Pause the video if loading
-              resizeMode="cover" // Resize mode for video
-              style={{ display: isVideoLoading ? 'none' : 'flex' }} // Hide video until it's loaded
-              repeat={false} // No continuous repeat
+      <View className="mt-2  mx-2  w-full">
+        <View className="h-full" {...events}>
+          <Canvas
+            onCreated={state => {
+              const _gl = state.gl.getContext();
+
+              // Override pixelStorei to handle unsupported parameters in expo-gl
+              const originalPixelStorei = _gl.pixelStorei.bind(_gl);
+              _gl.pixelStorei = function (parameter, value) {
+                if (parameter === _gl.UNPACK_FLIP_Y_WEBGL) {
+                  return originalPixelStorei(parameter, value);
+                }
+                // Ignore unsupported parameters to avoid the warning
+              };
+            }}>
+            <OrbitControls
+              enableZoom={false}
+              enablePan={false}
+              maxPolarAngle={Math.PI / 2} // Limit the vertical angle to lock the model vertically
+              minPolarAngle={Math.PI / 2}
             />
-          )}
-
-          {/* Swap Button */}
-          <View className="absolute bottom-5 right-2">
-            <MaterialIcons name="swap-vert" size={50} color={"white"} className="ml-2" onPress={() => navigation.navigate("SignToText")} />
-          </View>
+            <Suspense fallback={null}>
+              <ambientLight intensity={5} />
+              <Character />
+            </Suspense>
+          </Canvas>
         </View>
-        
-        <View className="bg-slate-50 py-3">
-        {/* Suggested Messages */}
-        <ScrollView horizontal={true} className="flex-row gap-2 mx-9">
-          {suggestions.map((message) => (
-            <TouchableOpacity key={message.id} onPress={() => handlePlayVideo(message.message)}>
+
+        <View className="absolute bottom-[140] right-3">
+          <MaterialIcons
+            name="swap-vert"
+            size={50}
+            color="white"
+            onPress={() => navigation.navigate('SignToText')}
+          />
+        </View>
+      </View>
+
+      <View className="bg-[#000000] py-3 absolute bottom-0 opacity-90 ">
+        <ScrollView horizontal className="flex-row gap-2 mx-9">
+          {suggestions.map(message => (
+            <TouchableOpacity
+              key={message.id}
+              onPress={() => console.log('Handle model animation')}>
               <View>
-                <Text className="text-center text-white border-solid rounded-md bg-black px-2 py-1 text-md font-semibold">
+                <Text className="text-center text-[#f59e0b] border-solid rounded-md bg-[#1A2130] px-2 py-1 text-md font-semibold">
                   {message.message}
                 </Text>
               </View>
@@ -107,44 +90,36 @@ const EngToSign = ({ navigation }) => {
           ))}
         </ScrollView>
 
-        {/* Input Area */}
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={{ flex: 1 }}
-        >
-          <View className="flex mx-7 flex-row items-center mt-2 mb-2">
-            <View className="w-5/6 mx-2 border-solid border-zinc-200 border-2 rounded-md px-2">
-              <TextInput
-                placeholder="Type to Translate"
-                value={translationText}
-                onChangeText={handleTextChange}
-                placeholderTextColor="black"
-                className="pr-10 text-black"
-              />
+        <View className="flex mx-7 flex-row items-center mt-2 mb-2">
+          <View className="w-5/6 mx-2 border-solid border-zinc-200 border-2 rounded-md px-2">
+            <TextInput
+              placeholder="Type to Translate"
+              value={translationText}
+              onChangeText={handleTextChange}
+              placeholderTextColor="#f59e0b"
+              className="pr-10 text-[#f59e0b]"
+            />
 
-              {translationText === '' && (
-                <View className="absolute right-3 top-1/4 transform -translate-y-1/2">
-                  <FontAwesome5 name="camera" size={23} color="#fbb06a" />
-                </View>
-              )}
-            </View>
-
-            <TouchableOpacity
-              onPress={() => handlePlayVideo(translationText)}
-              className="mx-auto bg-red-300 w-10 h-10 justify-center items-center border-solid rounded-3xl"
-            >
-              {translationText === '' ? (
-                <MaterialIcons name="keyboard-voice" size={23} color={"white"} className="ml-2" />
-              ) : (
-                <MaterialIcons name="send" size={23} color={"white"} className="ml-2" />
-              )}
-            </TouchableOpacity>
+            {translationText === '' && (
+              <View className="absolute right-3 top-1/4 transform -translate-y-1/2">
+                <FontAwesome5 name="camera" size={23} color="#f59e0b" />
+              </View>
+            )}
           </View>
-        </KeyboardAvoidingView>
+
+          <TouchableOpacity
+            onPress={() => console.log('Translate')}
+            className="mx-auto bg-[#f59e0b] w-10 h-10 justify-center items-center border-solid rounded-3xl">
+            {translationText === '' ? (
+              <MaterialIcons name="keyboard-voice" size={26} color="white" />
+            ) : (
+              <MaterialIcons name="send" size={23} color="white" />
+            )}
+          </TouchableOpacity>
         </View>
-      </ScrollView>
       </View>
-    </>
+    </View>
+    //  </KeyboardAvoidingView>
   );
 };
 
