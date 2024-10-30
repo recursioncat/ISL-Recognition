@@ -59,9 +59,6 @@ def extractPostitionFromVideo(filepath, number_of_frames=30):
 
         cap.release()
 
-        # Optionally save the keypoints list as a .npy file or process as needed
-        print("Keypoint List generated: ")
-        print(keypoints_list)
         return keypoints_list
 
     except Exception as e:

@@ -5,7 +5,7 @@ import keras
 import os
 
 app = Flask(__name__)
-model = keras.models.load_model('VideoRecognitionV2_Bekar.keras')
+model = keras.models.load_model('Models/AbhayaV2.04_Corrected_Randomized.keras')
 classes = ['Are you free today', 'Can you repeat that please',
        'Congratulations', 'help me please', 'how are you', 'I am fine',
        'I love you', 'no', 'Please come,Welcome', 'Talk slower please',
@@ -26,6 +26,8 @@ def predict():
      
      result = model.predict(video)
      results = classes[np.argmax(result)]
+     print(result)
+     print("Confidence: ", np.max(result)*100)
      
      return jsonify(results)
 
