@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StatusBar, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import { Camera, useCameraDevice } from 'react-native-vision-camera';
 import BackButton from '../components/BackButton';
-import { baseUrl } from '../utils';
+import { API_URL } from '@env';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 
@@ -57,7 +57,7 @@ export default function SignToText({ navigation }) {
     });
 
     try {
-      const response = await fetch(`${baseUrl}/api/v1/ai/upload/sendimageai`, {
+      const response = await fetch(`${API_URL}/api/v1/ai/upload/sendimageai`, {
         method: 'POST',
         body: formData,
         headers: {
