@@ -9,6 +9,7 @@ import {
   Platform,
   StatusBar,
   TouchableOpacity,
+  Keyboard,
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -17,20 +18,137 @@ import {Canvas} from '@react-three/fiber';
 import useControls from 'r3f-native-orbitcontrols';
 import Character from '../components/Charecter.jsx';
 import axios from 'axios';
-import { API_URL } from '@env';
-
+import {API_URL} from '@env';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const EngToSign = ({navigation}) => {
   const [translationText, setTranslationText] = useState('');
   const [OrbitControls, events] = useControls();
+  const [isFile, setIsFile] = useState(false);
+  const [file, setFile] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleTextChange = text => {
     setTranslationText(text);
+    // If the text input is cleared, reset the file-related states
+    if (text === '') {
+      setFile(null);
+      setIsFile(false);
+    }
+  };
+
+  const openCamera = () => {
+    Keyboard.dismiss();
+    launchCamera(
+      {
+        mediaType: 'photo',
+        saveToPhotos: false, // Save to gallery (optional)
+      },
+      response => {
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+        } else if (response.errorCode) {
+          console.log('ImagePicker Error: ', response.errorMessage);
+        } else {
+          // Use the captured image
+          setTranslationText(response.assets[0].uri);
+          setFile(response.assets[0]);
+          setIsFile(true);
+          console.log(response.assets[0].uri);
+        }
+      },
+    );
+  };
+
+  const chooseFromGallery = () => {
+    Keyboard.dismiss();
+    launchImageLibrary(
+      {
+        mediaType: 'photo',
+      },
+      response => {
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+        } else if (response.errorCode) {
+          console.log('ImagePicker Error: ', response.errorMessage);
+        } else {
+          // Use the selected image
+          setTranslationText(response.assets[0].uri);
+          setFile(response.assets[0]);
+          setIsFile(true);
+          console.log(isFile);
+          console.log(response.assets[0].uri);
+        }
+      },
+    );
+  };
+
+  const handleTranslate = async () => {
+
+    Keyboard.dismiss();
+
+    let response;
+
+    try {
+      setIsLoading(true);
+      setTranslationText('');
+      setFile(null);
+      setIsFile(false);
+
+      if (!isFile) {
+
+      response = await axios.post(  // handel for text translation
+        `${API_URL}/api/v1/animation/generate/sequence/isl`,
+        {
+          text: translationText,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'x-auth-token': await AsyncStorage.getItem('token')
+          },
+        }
+      );
+
+    } else {
+
+      const formData = new FormData();
+
+      formData.append('file', {
+        uri: file.uri,
+        type: file.type,
+        name: file.fileName,
+      }); // Append the file to the form data
+
+      response = await axios.post(  // handel for file translation
+        `${API_URL}/api/v1/animation/generate/sequence/isl`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            'x-auth-token': await AsyncStorage.getItem('token'),
+          },
+        }
+      );
+    }
+
+      console.log(response.data);
+      setIsLoading(false);
+      
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const handelFileClose = () => {
+    setFile(null);
+    setIsFile(false);
+    setTranslationText('');
   };
 
   return (
-    // <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1, backgroundColor: '#c8cbb7' }}>
-    <View className="flex-1" style={{backgroundColor : '#E5E4E2'}}>
+    <View className="flex-1" style={{backgroundColor: '#E5E4E2'}}>
       <StatusBar
         barStyle="light-content"
         backgroundColor="transparent"
@@ -96,19 +214,42 @@ const EngToSign = ({navigation}) => {
               placeholder="Type to Translate"
               value={translationText}
               onChangeText={handleTextChange}
+              editable={!isLoading && !isFile ? true : false}
               placeholderTextColor="#f59e0b"
               className="pr-10 text-[#f59e0b]"
             />
 
             {translationText === '' && (
+              <View className="absolute right-3 top-1/4 transform -translate-y-1/2 flex-row gap-2">
+                <MaterialIcons
+                  name="attach-file"
+                  size={23}
+                  color="#f59e0b"
+                  onPress={() => chooseFromGallery()}
+                />
+                <FontAwesome5
+                  name="camera"
+                  size={23}
+                  color="#f59e0b"
+                  onPress={() => openCamera()}
+                />
+              </View>
+            )}
+
+            {isFile && (
               <View className="absolute right-3 top-1/4 transform -translate-y-1/2">
-                <FontAwesome5 name="camera" size={23} color="#f59e0b" />
+                <MaterialIcons
+                  name="close"
+                  size={20}
+                  color="#f59e0b"
+                  onPress={handelFileClose}
+                />
               </View>
             )}
           </View>
 
           <TouchableOpacity
-            onPress={() => console.log('Translate')}
+            onPress={() => handleTranslate()}
             className="mx-auto bg-[#f59e0b] w-10 h-10 justify-center items-center border-solid rounded-3xl">
             {translationText === '' ? (
               <MaterialIcons name="keyboard-voice" size={26} color="white" />
@@ -119,7 +260,6 @@ const EngToSign = ({navigation}) => {
         </View>
       </View>
     </View>
-    //  </KeyboardAvoidingView>
   );
 };
 
