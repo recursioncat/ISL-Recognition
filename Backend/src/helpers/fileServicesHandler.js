@@ -44,6 +44,10 @@ import  fs from "fs";
       const client = new speech.SpeechClient();
       console.log(file);
       let input = file.path || file.url;
+
+      if(file.url){
+        input  = input.path;
+      }
       console.log("Processing audio:", input);
       
       async function quickstart() {

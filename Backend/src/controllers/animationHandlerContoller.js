@@ -23,6 +23,7 @@ export const handelAllRequests = async (req, res) => {
             selectedService = "imgToIsl";
         } else if (file.mimetype.startsWith("audio")) {
             selectedService = "speechToIsl";
+            
         } else {
             return errorResponseHandler(res, 400, "Unsupported file type");
         }
