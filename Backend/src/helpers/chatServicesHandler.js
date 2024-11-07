@@ -1,4 +1,4 @@
-import {textTranslate , speechToText as sTt , imgToText} from './fileServicesHandler.js';
+import {textTranslate , speechToText as sTt , imgToText , IslVideoToText} from './fileServicesHandler.js';
 import { sequenceGen } from './aiSequenceHandler.js';
 
 export async function chatServicesHandler(userId, message, mediaUrl, selectedService) {
@@ -82,9 +82,8 @@ export async function chatServicesHandler(userId, message, mediaUrl, selectedSer
                 }
 
                 if (selectedService === 'IslVideoToText') {
-                    // result = await IslVideoToText(url);
-                    // result_type = 'text';
-                    console.log('ISLVideoToText service is not available');
+                    result = await IslVideoToText(url);
+                    result_type = 'text';
                 } else if (selectedService === 'IslVideoToVoice') {
                     // result = await IslVideoToVoice(url);
                     // result_type = 'audio';
