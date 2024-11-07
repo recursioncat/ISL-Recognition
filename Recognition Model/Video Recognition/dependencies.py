@@ -2,6 +2,7 @@ import cv2
 import mediapipe as mp
 import warnings
 import numpy as np
+import requests
 
 mp_holistic = mp.solutions.holistic
 mp_drawing = mp.solutions.drawing_utils
@@ -65,3 +66,25 @@ def extractPostitionFromVideo(filepath, number_of_frames=30):
         print(e)
         cap.release()
         
+
+def downloadFile(url, saveLocation):
+    response = requests.get(url, stream=True)
+    
+    if response.status_code == 200:
+        with open(saveLocation, 'wb') as file:
+            for chunk in response.iter_content(chunk_size=8192):
+                file.write(chunk)
+        
+        return 200
+    
+    else:
+        return response.status_code
+    
+def extractExtension(url):
+    ext = ''
+    for i in reversed(url):
+        ext += i
+        if i == '.':
+            break
+    
+    return ext[::-1]

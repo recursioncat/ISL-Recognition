@@ -3,6 +3,7 @@ import numpy as np
 from dependencies import *
 import keras
 import os
+import requests
 
 app = Flask(__name__)
 model = keras.models.load_model('Models/AbhayaV2.04_Corrected_Randomized.keras')
@@ -30,6 +31,26 @@ def predict():
      print("Confidence: ", np.max(result)*100)
      
      return jsonify(results)
+ 
+@app.route('/predictVideoFromLink', methods=['POST', 'GET'])
+def predictFromLink():
+    data = request.get_json(force=True)
+    url = data['url']
+    
+    extension = extractExtension(url)
+    filepath = f'Saved Video/Video{extension}'
+    
+    downloadFile(url, filepath)
+    
+    result = model.predict(filepath)
+    results = classes[np.argmax(result)]
+    print(result)
+    print("Confidence: ", np.max(result)*100)
+
+    return jsonify(results)
+    
+    
+    
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8000, debug=True)
