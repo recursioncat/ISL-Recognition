@@ -42,7 +42,9 @@ def predictFromLink():
     
     downloadFile(url, filepath)
     
-    result = model.predict(filepath)
+    video = preProcessVideo(filepath)
+    
+    result = model.predict(video)
     results = classes[np.argmax(result)]
     print(result)
     print("Confidence: ", np.max(result)*100)
