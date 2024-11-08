@@ -22,7 +22,7 @@ app.use(bodyParser.json());
 app.use( bodyParser.urlencoded({extended: true}));
 app.use(cors({
     origin: '*'
-})); // Allow all CORS requests
+})); 
 
 app.use('/uploads', express.static('uploads'));
 

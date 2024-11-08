@@ -1,4 +1,4 @@
-import React, {useState, useRef, Suspense} from 'react';
+import React, { useState, useRef, Suspense } from 'react';
 import {
   View,
   Image,
@@ -6,18 +6,20 @@ import {
   TextInput,
   ScrollView,
   KeyboardAvoidingView,
-  Platform,
+  Platform,StyleSheet,
   StatusBar,
   TouchableOpacity,
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {suggestions} from '../utils/index.js';
-import {Canvas} from '@react-three/fiber';
+import { suggestions } from '../utils/index.js';
+import { Canvas } from '@react-three/fiber';
+import { useGLTF, Environment } from '@react-three/drei/native'
 import useControls from 'r3f-native-orbitcontrols';
 import Character from '../components/Charecter.jsx';
+import Loader from '../components/LoadingSpinner.jsx';
 
-const EngToSign = ({navigation}) => {
+const EngToSign = ({ navigation }) => {
   const [translationText, setTranslationText] = useState('');
   const [OrbitControls, events] = useControls();
 
@@ -27,7 +29,7 @@ const EngToSign = ({navigation}) => {
 
   return (
     // <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1, backgroundColor: '#c8cbb7' }}>
-    <View className="flex-1" style={{backgroundColor : '#E5E4E2'}}>
+    <View className="flex-1" style={{ backgroundColor: '#E5E4E2' }}>
       <StatusBar
         barStyle="light-content"
         backgroundColor="transparent"
@@ -48,15 +50,20 @@ const EngToSign = ({navigation}) => {
                 }
                 // Ignore unsupported parameters to avoid the warning
               };
-            }}>
+            }} shadowMap>
             <OrbitControls
               enableZoom={false}
               enablePan={false}
               maxPolarAngle={Math.PI / 2} // Limit the vertical angle to lock the model vertically
               minPolarAngle={Math.PI / 2}
             />
-            <Suspense fallback={null}>
-              <ambientLight intensity={5} />
+            <Suspense fallback={<Loader />}>
+              <directionalLight
+                position={[5, 10, 15]}
+                intensity={3}
+                castShadow
+              />
+              <ambientLight intensity={2} />
               <Character />
             </Suspense>
           </Canvas>
@@ -119,5 +126,6 @@ const EngToSign = ({navigation}) => {
     //  </KeyboardAvoidingView>
   );
 };
+
 
 export default EngToSign;
