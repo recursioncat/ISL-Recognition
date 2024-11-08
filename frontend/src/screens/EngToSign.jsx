@@ -1,4 +1,4 @@
-import React, {useState, useRef, Suspense} from 'react';
+import React, { useState, useRef, Suspense } from 'react';
 import {
   View,
   Image,
@@ -6,15 +6,16 @@ import {
   TextInput,
   ScrollView,
   KeyboardAvoidingView,
-  Platform,
+  Platform,StyleSheet,
   StatusBar,
   TouchableOpacity,
   Keyboard,
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import {suggestions} from '../utils/index.js';
-import {Canvas} from '@react-three/fiber';
+import { suggestions } from '../utils/index.js';
+import { Canvas } from '@react-three/fiber';
+import { useGLTF, Environment } from '@react-three/drei/native'
 import useControls from 'r3f-native-orbitcontrols';
 import Character from '../components/Charecter.jsx';
 import axios from 'axios';
@@ -24,7 +25,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNFS from 'react-native-fs';
 import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 
-const EngToSign = ({navigation}) => {
+const EngToSign = ({ navigation }) => {
   const [translationText, setTranslationText] = useState('');
   const [OrbitControls, events] = useControls();
   const [isFile, setIsFile] = useState(false);
@@ -252,7 +253,7 @@ const EngToSign = ({navigation}) => {
                 }
                 // Ignore unsupported parameters to avoid the warning
               };
-            }}>
+            }} shadowMap>
             <OrbitControls
               enableZoom={false}
               enablePan={false}
@@ -345,5 +346,6 @@ const EngToSign = ({navigation}) => {
     </View>
   );
 };
+
 
 export default EngToSign;
