@@ -7,7 +7,7 @@ import { emailValidator } from '../../helpers/emailValidator'
 import { passwordValidator } from '../../helpers/passwordValidator'
 import Toast from 'react-native-toast-message';
 import axios from 'axios'
-import { baseUrl } from '../../utils'
+import { API_URL } from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { UserContext } from '../../context/UserContext'; // Import UserContext
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
@@ -41,7 +41,7 @@ export default function LoginScreen({ navigation }) {
     }
   
     try {
-      const response = await axios.post(`${baseUrl}/api/v1/auth/login`, {
+      const response = await axios.post(`${API_URL}/api/v1/auth/login`, {
         email,
         password,
       });
@@ -115,7 +115,7 @@ const GoogleSignIn = async () => {
       return;
     }
 
-    const response = await axios.post(`${baseUrl}/api/v1/auth/googleauth`, {
+    const response = await axios.post(`${API_URL}/api/v1/auth/googleauth`, {
       userInfo
     });
     console.log(response.status);

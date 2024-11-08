@@ -8,7 +8,7 @@ import { passwordValidator } from '../../helpers/passwordValidator'
 import { nameValidator } from '../../helpers/nameValidator'
 import Toast from 'react-native-toast-message';
 import axios from 'axios'
-import { baseUrl } from '../../utils'
+import { API_URL } from '@env';
 
 
 export default function RegisterScreen({ navigation }) {
@@ -32,7 +32,7 @@ export default function RegisterScreen({ navigation }) {
     }
   
     try {
-      const response = await axios.post(`${baseUrl}/api/v1/auth/sentotp`, {
+      const response = await axios.post(`${API_URL}/api/v1/auth/sentotp`, {
         email,
       });
       
@@ -71,7 +71,7 @@ export default function RegisterScreen({ navigation }) {
     }
   
     try {
-     const response = await axios.post(`${baseUrl}/api/v1/auth/register` ,{
+     const response = await axios.post(`${API_URL}/api/v1/auth/register` ,{
         fullName : name,
         email,
         password,

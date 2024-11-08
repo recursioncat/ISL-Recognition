@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
-import { baseUrl } from '../../utils';
+import { API_URL } from '@env';
 import axios from 'axios';
 
 
@@ -16,7 +16,7 @@ GoogleSignin.configure({
     try {
       await GoogleSignin.hasPlayServices();
       const userInfo = await GoogleSignin.signIn();
-      const response = await axios.post(`${baseUrl}/api/v1/auth/googleauth`, {
+      const response = await axios.post(`${API_URL}/api/v1/auth/googleauth`, {
         userInfo
       });
       console.log(response.data);

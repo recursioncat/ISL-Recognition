@@ -34,6 +34,3 @@ export const serviceActions = [
     { action: 'IslVideoToVoice', icon: 'voice-chat' },
     {action: 'close', icon: 'close'}
   ];
-
-// export const baseUrl = 'https://b21c-2405-201-8020-380a-88a1-32c6-fb7f-f8a9.ngrok-free.app'
-export const baseUrl = "http://192.168.29.163:3000"
