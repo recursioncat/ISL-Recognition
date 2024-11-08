@@ -33,6 +33,7 @@ const EngToSign = ({navigation}) => {
   const [isRecording, setIsRecording] = useState(false);
   const [recordTime, setRecordTime] = useState('00:00');
   const [sequence, setSequence] = useState([]);
+  const [playAnimation, setPlayAnimation] = useState(false);
 
   const audioRecorderPlayer = new AudioRecorderPlayer();
 
@@ -215,6 +216,7 @@ const EngToSign = ({navigation}) => {
 
       console.log(response.data);
       setSequence(response.data);
+
       setIsLoading(false);
       
     } catch (err) {
