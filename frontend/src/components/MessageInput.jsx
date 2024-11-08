@@ -90,7 +90,8 @@ const MessageInput = ({
             'Content-Type': 'multipart/form-data',
             'x-auth-token': await AsyncStorage.getItem('token'),
           },
-        },
+          timeout: 10000, // Increase timeout to 10 seconds
+        }
       );
 
       const messageObject = {

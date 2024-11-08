@@ -21,6 +21,8 @@ import axios from 'axios';
 import {API_URL} from '@env';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import RNFS from 'react-native-fs';
+import AudioRecorderPlayer from 'react-native-audio-recorder-player';
 
 const EngToSign = ({navigation}) => {
   const [translationText, setTranslationText] = useState('');
@@ -28,6 +30,84 @@ const EngToSign = ({navigation}) => {
   const [isFile, setIsFile] = useState(false);
   const [file, setFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordTime, setRecordTime] = useState('00:00');
+  const [sequence, setSequence] = useState([]);
+
+  const audioRecorderPlayer = new AudioRecorderPlayer();
+
+  const startRecording = async () => {
+    console.log('Recording started');
+      try{
+        const filePath = `${RNFS.CachesDirectoryPath}/voiceMessage.m4a`;
+        const result = await audioRecorderPlayer.startRecorder(filePath);
+        console.log('Recording started. File path: ', result);
+        setFile(result);
+        setIsFile(true);
+        setIsRecording(true);
+        audioRecorderPlayer.addRecordBackListener((e) => {
+          setRecordTime(audioRecorderPlayer.mmssss(Math.floor(e.currentPosition)));
+          return;
+        });
+      }catch(error){
+        console.error('Error starting recording: ', error);
+      }
+  };
+
+  const cancelRecording = async () => {
+    try{
+      const result = await audioRecorderPlayer.stopRecorder();
+      audioRecorderPlayer.removeRecordBackListener();
+      console.log('Recording stopped. File path: ', result);
+      setIsRecording(false);
+      setFile(null);
+      setIsFile(false);
+      setRecordTime('00:00');
+      console.log('Recording cancelled');
+    }catch(error){
+      console.error('Error cancelling recording: ', error);
+    }
+  };
+
+  const stopRecording = async () => {
+    try {
+      const result = await audioRecorderPlayer.stopRecorder();
+      audioRecorderPlayer.removeRecordBackListener();
+      setIsRecording(false);
+      setRecordTime('00:00');
+      setIsFile(false);
+      console.log('Recording stopped. File path: ', result);
+      await uploadVoiceMessage();
+      console.log('Recording stopped. Uploading file: ', file);
+    }catch(error){
+      console.log('Error stopping recording: ', error);
+    }
+  };
+
+  const uploadVoiceMessage = async () => {
+    try{
+      const formData = new FormData();
+      formData.append('file', {
+        uri: file,
+        type: 'audio/mp3',
+        name: 'voiceMessage.mp3',
+      });
+
+      const response = await axios.post(`${API_URL}/api/v1/animation/generate/sequence/isl`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'x-auth-token': await AsyncStorage.getItem('token'),
+        },
+      });
+
+      setFile(null);
+      setIsFile(false);
+
+      console.log(response.data);
+    }catch(error){
+      console.error('Error uploading voice message: ', error);
+    }
+  };
 
   const handleTextChange = text => {
     setTranslationText(text);
@@ -134,6 +214,7 @@ const EngToSign = ({navigation}) => {
     }
 
       console.log(response.data);
+      setSequence(response.data);
       setIsLoading(false);
       
     } catch (err) {
@@ -177,8 +258,8 @@ const EngToSign = ({navigation}) => {
               minPolarAngle={Math.PI / 2}
             />
             <Suspense fallback={null}>
-              <ambientLight intensity={5} />
-              <Character />
+              <ambientLight intensity={2} />
+              <Character sequence={sequence}/>
             </Suspense>
           </Canvas>
         </View>
@@ -219,7 +300,7 @@ const EngToSign = ({navigation}) => {
               className="pr-10 text-[#f59e0b]"
             />
 
-            {translationText === '' && (
+            {translationText === '' && !isRecording && (
               <View className="absolute right-3 top-1/4 transform -translate-y-1/2 flex-row gap-2">
                 <MaterialIcons
                   name="attach-file"
@@ -235,7 +316,7 @@ const EngToSign = ({navigation}) => {
                 />
               </View>
             )}
-
+ 
             {isFile && (
               <View className="absolute right-3 top-1/4 transform -translate-y-1/2">
                 <MaterialIcons
@@ -249,12 +330,12 @@ const EngToSign = ({navigation}) => {
           </View>
 
           <TouchableOpacity
-            onPress={() => handleTranslate()}
+            // onPress={() => handleTranslate()}
             className="mx-auto bg-[#f59e0b] w-10 h-10 justify-center items-center border-solid rounded-3xl">
-            {translationText === '' ? (
-              <MaterialIcons name="keyboard-voice" size={26} color="white" />
+            {translationText === '' && !isRecording ? (
+              <MaterialIcons name="keyboard-voice" size={26} color="white" onPress={startRecording} />
             ) : (
-              <MaterialIcons name="send" size={23} color="white" />
+              <MaterialIcons name="send" size={23} color="white" onPress={handleTranslate}/>
             )}
           </TouchableOpacity>
         </View>
