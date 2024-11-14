@@ -17,7 +17,12 @@ def preProcessVideo(url):
     vid = extractPostitionFromVideo(url)
     vid = np.array([vid])
     return vid
-    
+
+
+
+@app.route('/', methods=['GET'])
+def hello():
+    return "hello"
 
 @app.route('/predictfromvideo', methods=['POST', 'GET'])
 def predict():
